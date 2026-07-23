@@ -2,48 +2,151 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Banu Rohit Vutukuri — FPGA/RTL Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banu Rohit Vutukuri — RTL / Hardware Engineering Portfolio</title>
 <style>
-  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 800px; margin: 60px auto; padding: 0 20px; line-height: 1.6; color: #222; }
-  h1 { font-size: 28px; }
-  h2 { font-size: 20px; margin-top: 40px; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
-  .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-  .done { background: #d4edda; color: #155724; }
-  .progress { background: #fff3cd; color: #856404; }
-  .planned { background: #e2e3e5; color: #383d41; }
-  a { color: #0366d6; }
-  ul { padding-left: 20px; }
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --amber: #d29922;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 80px 24px 120px; }
+
+  .hero h1 { font-size: 34px; margin: 0 0 8px; color: #fff; }
+  .hero .tagline { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  .hero p { font-size: 16px; color: var(--text); max-width: 680px; }
+
+  .links { margin: 24px 0 60px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .links a {
+    color: var(--accent); text-decoration: none; font-weight: 600;
+    border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px;
+    transition: border-color .15s;
+  }
+  .links a:hover { border-color: var(--accent); }
+
+  h2.section {
+    font-size: 22px; color: #fff; margin: 60px 0 8px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .section-intro { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 24px 28px; margin-bottom: 20px;
+  }
+  .card h3 { margin: 0 0 6px; font-size: 18px; color: #fff; display: flex; align-items: center; gap: 10px; }
+  .card .summary { color: var(--muted); font-size: 15px; margin-bottom: 14px; }
+  .card ul { margin: 0; padding-left: 20px; font-size: 14.5px; }
+  .card ul li { margin-bottom: 6px; }
+  .card a.repo-link { display: inline-block; margin-top: 14px; color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .card a.repo-link:hover { text-decoration: underline; }
+
+  .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; }
+  .badge.done { background: rgba(63,185,80,.15); color: var(--green); border: 1px solid rgba(63,185,80,.4); }
+  .badge.progress { background: rgba(210,153,34,.15); color: var(--amber); border: 1px solid rgba(210,153,34,.4); }
+  .badge.planned { background: rgba(139,148,158,.15); color: var(--muted); border: 1px solid var(--border); }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin: 30px 0 0; }
+  .stack span { background: var(--card); border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; font-size: 13px; color: var(--muted); }
+
+  .stretch-item { margin-bottom: 16px; }
+  .stretch-item strong { color: #fff; }
+
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+  footer a { color: var(--accent); text-decoration: none; }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<h1>FPGA / RTL Portfolio</h1>
-<p>Banu Rohit Vutukuri — Digital design portfolio built for hardware/ASIC/verification engineering roles.</p>
-<p><a href="https://github.com/Vutukuribanurohit02/fpga-portfolio">GitHub Repository</a></p>
+  <div class="hero">
+    <h1>Banu Rohit Vutukuri</h1>
+    <p class="tagline">RTL Design & Verification Engineer, in training on real silicon</p>
+    <p>
+      I build digital hardware from the register level down to the bitstream — writing SystemVerilog RTL,
+      proving correctness with self-checking testbenches and formal methods, and validating every design
+      on real FPGA hardware before calling it done. This portfolio tracks that process end-to-end:
+      spec &rarr; RTL &rarr; simulation &rarr; synthesis &rarr; silicon.
+    </p>
+  </div>
 
-<h2>Project 1 — UART/APB Peripheral <span class="status done">Complete</span></h2>
-<p>A configurable UART transmitter/receiver with an AMBA APB register interface. Self-checking testbenches, formally simulated, synthesized and programmed onto real Nexys A7 hardware.</p>
-<ul>
-  <li>Register map: TXDATA, RXDATA, STATUS, BAUDDIV over APB</li>
-  <li>44/44 TX checks passed, 4/4 RX checks passed across 4 test patterns</li>
-  <li>Synthesized, implemented, bitstream generated, programmed on Artix-7</li>
-</ul>
-<p><a href="./project1-uart.html">View details →</a></p>
+  <div class="links">
+    <a href="https://github.com/Vutukuribanurohit02/fpga-portfolio">GitHub Repository</a>
+    <a href="https://www.linkedin.com/in/banurohit-vutukuri/">LinkedIn</a>
+    <a href="mailto:vutukuribanurohit02@gmail.com">Email</a>
+  </div>
 
-<h2>Project 2 — Async FIFO with Formal CDC Proof <span class="status progress">In Progress</span></h2>
-<p>Clock-domain-crossing FIFO with a SymbiYosys formal correctness proof.</p>
+  <h2 class="section">Projects</h2>
+  <p class="section-intro">Each project is built, verified, and — where possible — validated on physical hardware, not just simulated.</p>
 
-<h2>Project 3 — RV32I ALU <span class="status planned">Planned</span></h2>
-<p>Formally verified arithmetic logic unit.</p>
+  <div class="card">
+    <h3>UART / APB Peripheral <span class="badge done">Complete</span></h3>
+    <p class="summary">A configurable UART transmitter/receiver wrapped in an AMBA APB register interface — the first building block toward a full SoC.</p>
+    <ul>
+      <li>Register map (TXDATA / RXDATA / STATUS / BAUDDIV) implemented as a clean APB slave</li>
+      <li>16&times; oversampled baud generator, FSM-based TX and RX shift registers with 2-flop input synchronization</li>
+      <li>Self-checking SystemVerilog testbenches — 44/44 TX checks and 4/4 RX checks passed across 4 data patterns (0xA5, 0x00, 0xFF, 0x55)</li>
+      <li>Synthesized, implemented, and <strong>programmed onto a real Nexys A7 (Artix-7 XC7A100T)</strong> via a board-level wrapper driven by switches and LEDs</li>
+    </ul>
+    <a class="repo-link" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project1-uart">View source →</a>
+  </div>
 
-<h2>Project 4 — Single-Cycle RV32I CPU <span class="status planned">Planned</span></h2>
-<p>Runs compiled C.</p>
+  <div class="card">
+    <h3>Async FIFO with Formal CDC Proof <span class="badge progress">In Progress</span></h3>
+    <p class="summary">A clock-domain-crossing FIFO, with correctness proven formally via SymbiYosys rather than only simulated — the piece most student projects skip.</p>
+  </div>
 
-<h2>Stretch Goals</h2>
-<ul>
-  <li>Research paper reimplementation (Weingarten et al., DATE 2024 — Polynomial Formal Verification of a RISC-V processor)</li>
-  <li>Tiny Tapeout silicon submission</li>
-</ul>
+  <div class="card">
+    <h3>RV32I ALU <span class="badge planned">Planned</span></h3>
+    <p class="summary">Formally verified arithmetic logic unit — the first functional block of a from-scratch RISC-V core.</p>
+  </div>
 
+  <div class="card">
+    <h3>Single-Cycle RV32I CPU <span class="badge planned">Planned</span></h3>
+    <p class="summary">A single-cycle RV32I processor capable of running compiled C — the flagship piece tying every earlier project together.</p>
+  </div>
+
+  <h2 class="section">Stretch Goals</h2>
+  <div class="stretch-item">
+    <strong>Research paper reimplementation</strong> — applying the methodology from Weingarten et al., DATE 2024,
+    "Complete and Efficient Verification for a RISC-V Processor Using Formal Verification," to a self-built RV32I core:
+    extending formal proofs beyond the ALU into full sequential correctness.
+  </div>
+  <div class="stretch-item">
+    <strong>Tiny Tapeout silicon submission</strong> — fabricating a compact verified module on the SkyWater SKY130
+    process via the TTSKY26c shuttle.
+  </div>
+
+  <h2 class="section">Toolchain</h2>
+  <div class="stack">
+    <span>SystemVerilog</span>
+    <span>Vivado ML Standard</span>
+    <span>Vivado Simulator (XSim)</span>
+    <span>Icarus Verilog</span>
+    <span>Verilator</span>
+    <span>SymbiYosys</span>
+    <span>Yosys</span>
+    <span>OpenLane / OpenROAD</span>
+    <span>Digilent Nexys A7 (Artix-7)</span>
+  </div>
+
+  <footer>
+    Built by Banu Rohit Vutukuri &middot; <a href="https://www.linkedin.com/in/banurohit-vutukuri/">LinkedIn</a> &middot; <a href="mailto:vutukuribanurohit02@gmail.com">vutukuribanurohit02@gmail.com</a>
+  </footer>
+
+</div>
 </body>
 </html>
