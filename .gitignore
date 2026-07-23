@@ -1,0 +1,21 @@
+# Vivado generated files
+*.jou
+*.log
+*.str
+*.xpr
+.Xil/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.srcs/*.xml
+webtalk*
+vivado*.jou
+vivado*.log
+usage_statistics_webtalk.html
+usage_statistics_webtalk.xml
+
+# OS files
+.DS_Store
+Thumbs.db
