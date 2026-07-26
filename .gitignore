@@ -23,3 +23,8 @@ Thumbs.db
 project2-async-fifo/formal/fifo/
 project2-async-fifo/sim/*.vcd
 project2-async-fifo/sim/*.vvp
+
+# SymbiYosys formal verification build output (Project 3)
+project3-rv32i-alu/formal/alu/
+project3-rv32i-alu/sim/*.vvp
+project3-rv32i-alu/sim/*.vcd

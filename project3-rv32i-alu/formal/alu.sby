@@ -1,0 +1,17 @@
+[options]
+mode bmc
+depth 1
+
+[engines]
+smtbmc boolector
+
+[script]
+read -formal -sv alu.sv
+read -formal -sv alu_bind.sv
+read -formal -sv alu_formal.sv
+prep -top alu_formal_top
+
+[files]
+../rtl/alu.sv
+alu_bind.sv
+alu_formal.sv
