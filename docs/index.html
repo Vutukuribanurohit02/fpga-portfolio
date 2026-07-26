@@ -105,8 +105,14 @@
   </div>
 
   <div class="card">
-    <h3>Async FIFO with Formal CDC Proof <span class="badge progress">In Progress</span></h3>
+    <h3>Async FIFO with Formal CDC Proof <span class="badge done">Complete</span></h3>
     <p class="summary">A clock-domain-crossing FIFO, with correctness proven formally via SymbiYosys rather than only simulated — the piece most student projects skip.</p>
+    <ul>
+      <li>Cummings SNUG 2002 dual-clock architecture with Gray-code pointer synchronization and 2-flop CDC synchronizers</li>
+      <li>Formally proven no-overflow safety property (SymbiYosys/Boolector, BMC depth 20) — caught and fixed a vacuous-proof bug from unresolved hierarchical signal references along the way</li>
+      <li>Self-checking testbench across independent 100MHz/66MHz clock domains — 121 writes, 121 reads, 0 mismatches</li>
+    </ul>
+    <a class="repo-link" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project2-async-fifo">View source →</a>
   </div>
 
   <div class="card">
