@@ -1,0 +1,5 @@
+read_verilog -sv sync_2ff.sv wptr_full.sv rptr_empty.sv fifo_mem.sv async_fifo.sv
+hierarchy -top async_fifo
+proc
+opt
+stat

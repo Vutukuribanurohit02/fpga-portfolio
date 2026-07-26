@@ -1,0 +1,25 @@
+[options]
+mode bmc
+depth 20
+multiclock on
+
+[engines]
+smtbmc boolector
+
+[script]
+read -formal -sv sync_2ff.sv
+read -formal -sv wptr_full.sv
+read -formal -sv rptr_empty.sv
+read -formal -sv fifo_mem.sv
+read -formal -sv async_fifo.sv
+read -formal -sv fifo_formal.sv
+prep -top fifo_formal_top
+
+[files]
+../rtl/sync_2ff.sv
+../rtl/wptr_full.sv
+../rtl/rptr_empty.sv
+../rtl/fifo_mem.sv
+../rtl/async_fifo.sv
+fifo_bind.sv
+fifo_formal.sv

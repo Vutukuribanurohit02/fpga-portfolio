@@ -39,11 +39,13 @@ A configurable UART transmitter/receiver wrapped in an AMBA APB register interfa
 
 **[→ Full technical write-up and verification details](./project1-uart/README.md)**
 
-### 🟡 Project 2 — Async FIFO with Formal CDC Proof
+### ✅ Project 2 — Async FIFO with Formal CDC Proof
 
-*In progress*
+*Complete — core safety property formally proven, functional simulation passing*
 
 A clock-domain-crossing FIFO with correctness proven formally via SymbiYosys, not only simulated — the verification depth most student portfolios skip.
+
+**[→ Full technical write-up and verification details](./project2-async-fifo/README.md)**
 
 ### ⚪ Project 3 — RV32I ALU
 
