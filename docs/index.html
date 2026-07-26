@@ -128,8 +128,15 @@
   </div>
 
   <div class="card">
-    <h3>Single-Cycle RV32I CPU <span class="badge planned">Planned</span></h3>
-    <p class="summary">A single-cycle RV32I processor capable of running compiled C — the flagship piece tying every earlier project together.</p>
+    <h3>Single-Cycle RV32I CPU <span class="badge done">Complete</span></h3>
+    <p class="summary">A single-cycle RV32I CPU proven by compiling and running real C on it, not just simulation.</p>
+    <ul>
+      <li>Full RV32I datapath integrating the formally-verified ALU, register file, decoder, and control unit</li>
+      <li>Built a bare-metal RISC-V GCC cross-toolchain from source and ran a compiled C bubble-sort program end to end on the CPU</li>
+      <li>Formally verified ALU-op selection, branch/next-PC logic, and the x0-hardwired-to-zero invariant against independent reference computations</li>
+      <li>Caught and fixed two vacuous formal proofs before trusting results, applying lessons from Project 2's async FIFO bug</li>
+    </ul>
+    <a class="repo-link" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project4-rv32i-cpu">View source →</a>
   </div>
 
   <h2 class="section">Stretch Goals</h2>

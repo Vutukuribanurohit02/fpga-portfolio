@@ -60,11 +60,19 @@ A formally verified RV32I arithmetic logic unit — every one of 11 correctness 
 
 **[→ Full technical write-up and verification details](./project3-rv32i-alu/README.md)**
 
-### ⚪ Project 4 — Single-Cycle RV32I CPU
+### ✅ Project 4 — Single-Cycle RV32I CPU
 
-*Planned*
+*Complete*
 
-A single-cycle RV32I processor capable of running compiled C — the flagship project tying every earlier piece together.
+A single-cycle RV32I CPU integrating the formally-verified ALU, register file, decoder, and control unit — proven not just in simulation, but by compiling and running a real C program on it.
+
+- **Design:** Full RV32I datapath (PC logic, branch/jump resolution, unified Von Neumann memory) wired from Project 3's ALU plus new register file, decoder, and control modules
+- **Real C running on real hardware logic:** Built a bare-metal RISC-V GCC cross-toolchain from source and compiled a bubble-sort program; ran the compiled binary on the CPU in simulation — array correctly sorted end to end
+- **Formal verification:** Control-unit ALU-op selection, branch/next-PC logic, and the x0-hardwired-to-zero invariant proven against independent reference computations — including catching and fixing two vacuous proofs before trusting the results
+- **Debugging highlight:** Traced a nested-loop sort exiting on its first iteration down to a single 4-bit ALU op-encoding mismatch, via cycle-by-cycle waveform analysis
+- **Status:** RTL complete, functionally simulated running real compiled C, formally verified, fully documented
+
+**[→ Full technical write-up and verification details](./project4-rv32i-cpu/README.md)**
 
 ---
 
