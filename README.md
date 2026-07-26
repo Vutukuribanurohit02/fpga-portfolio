@@ -47,11 +47,18 @@ A clock-domain-crossing FIFO with correctness proven formally via SymbiYosys, no
 
 **[→ Full technical write-up and verification details](./project2-async-fifo/README.md)**
 
-### ⚪ Project 3 — RV32I ALU
+### ✅ Project 3 — RV32I ALU
 
-*Planned*
+*Complete*
 
-Formally verified arithmetic logic unit — the first functional block of a from-scratch RISC-V core.
+A formally verified RV32I arithmetic logic unit — every one of 11 correctness properties proven exhaustively, not just simulated.
+
+- **Design:** 10 RV32I ALU operations (ADD, SUB, AND, OR, XOR, SLT, SLTU, SLL, SRL, SRA) plus a zero flag, driven by a clean 4-bit opcode
+- **Verification:** Self-checking functional testbench — **527/527 checks passed**; formal proof via SymbiYosys/Boolector — **11/11 properties proven**, exhaustively covering every opcode and operand combination
+- **Debugging highlight:** Caught and resolved a false counterexample on the SRA property — traced to a Boolector SMT-translation quirk on variable-shift-amount arithmetic right shift, confirmed correct via netlist inspection and hand computation, fixed with a sign-extend/logical-shift/truncate reformulation
+- **Status:** RTL complete, functionally simulated, formally proven, fully documented
+
+**[→ Full technical write-up and verification details](./project3-rv32i-alu/README.md)**
 
 ### ⚪ Project 4 — Single-Cycle RV32I CPU
 

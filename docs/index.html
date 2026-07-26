@@ -116,8 +116,15 @@
   </div>
 
   <div class="card">
-    <h3>RV32I ALU <span class="badge planned">Planned</span></h3>
-    <p class="summary">Formally verified arithmetic logic unit — the first functional block of a from-scratch RISC-V core.</p>
+    <h3>RV32I ALU <span class="badge done">Complete</span></h3>
+    <p class="summary">A formally verified RV32I arithmetic logic unit, proven exhaustively rather than only simulated.</p>
+    <ul>
+      <li>10 RV32I ALU operations (ADD, SUB, AND, OR, XOR, SLT, SLTU, SLL, SRL, SRA) plus a zero flag, driven by a clean 4-bit opcode</li>
+      <li>Self-checking functional testbench — 527/527 checks passed</li>
+      <li>Formal proof via SymbiYosys/Boolector — 11/11 properties proven, covering every opcode and operand combination</li>
+      <li>Caught and fixed a false counterexample on the SRA property, traced to a Boolector SMT-translation quirk on variable-shift arithmetic right shift</li>
+    </ul>
+    <a class="repo-link" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project3-rv32i-alu">View source →</a>
   </div>
 
   <div class="card">
