@@ -1,0 +1,25 @@
+[options]
+mode cover
+depth 2
+
+[engines]
+smtbmc boolector
+
+[script]
+read_verilog -sv rv32i_cpu_formal.sv
+read_verilog -sv rv32i_alu.sv
+read_verilog -sv regfile.sv
+read_verilog -sv decoder.sv
+read_verilog -sv control.sv
+read_verilog -sv mem.sv
+read_verilog -sv pc_bind.sv
+prep -top pc_formal
+
+[files]
+rv32i_cpu_formal.sv
+rv32i_alu.sv
+regfile.sv
+decoder.sv
+control.sv
+mem.sv
+pc_bind.sv

@@ -28,3 +28,13 @@ project2-async-fifo/sim/*.vvp
 project3-rv32i-alu/formal/alu/
 project3-rv32i-alu/sim/*.vvp
 project3-rv32i-alu/sim/*.vcd
+
+# SymbiYosys formal verification build output (Project 4)
+project4-rv32i-cpu/formal/control/
+project4-rv32i-cpu/formal/control_cover/
+project4-rv32i-cpu/formal/pc/
+project4-rv32i-cpu/formal/pc_cover/
+project4-rv32i-cpu/formal/regfile/
+project4-rv32i-cpu/sim/*.vvp
+project4-rv32i-cpu/sim/*.vcd
+project4-rv32i-cpu/sim/*_output.log

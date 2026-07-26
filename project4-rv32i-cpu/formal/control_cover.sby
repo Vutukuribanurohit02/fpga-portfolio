@@ -1,0 +1,15 @@
+[options]
+mode cover
+depth 2
+
+[engines]
+smtbmc boolector
+
+[script]
+read_verilog -sv control.sv
+read_verilog -sv control_bind.sv
+prep -top control_formal
+
+[files]
+control.sv
+control_bind.sv

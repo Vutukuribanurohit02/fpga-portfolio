@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 5
+
+[engines]
+smtbmc boolector
+
+[script]
+read_verilog -sv regfile.sv
+read_verilog -sv regfile_bind.sv
+prep -top regfile
+
+[files]
+regfile.sv
+regfile_bind.sv
