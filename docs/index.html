@@ -128,6 +128,18 @@
   </div>
 
   <div class="card">
+    <h3>Physical Design: RV32I ALU <span class="badge done">Complete</span></h3>
+    <p class="summary">The RV32I ALU hardened from RTL to routed silicon on the SkyWater sky130 open PDK — not simulated, not estimated, laid out.</p>
+    <ul>
+      <li>Full RTL-to-GDSII flow via LibreLane/OpenROAD: synthesis, floorplan, placement, routing, DRC/LVS sign-off</li>
+      <li>Nine-corner static timing sign-off — measured 31.5MHz (worst case) to 56.3MHz (best case), a 1.8x PVT spread</li>
+      <li>Zero DRC, LVS, and antenna violations across the full flow; zero inferred latches confirmed by lint</li>
+      <li>Gate-level critical path traced with OpenSTA, identifying a concrete next-iteration target: carry-lookahead adder</li>
+    </ul>
+    <a class="repo-link" href="project5-physical-design/">View write-up →</a>
+  </div>
+
+  <div class="card">
     <h3>Single-Cycle RV32I CPU <span class="badge done">Complete</span></h3>
     <p class="summary">A single-cycle RV32I CPU proven by compiling and running real C on it, not just simulation.</p>
     <ul>
