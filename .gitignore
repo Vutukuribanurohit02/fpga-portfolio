@@ -38,3 +38,5 @@ project4-rv32i-cpu/formal/regfile/
 project4-rv32i-cpu/sim/*.vvp
 project4-rv32i-cpu/sim/*.vcd
 project4-rv32i-cpu/sim/*_output.log
+__pycache__/
+*.pyc
