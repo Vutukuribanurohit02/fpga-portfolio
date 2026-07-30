@@ -76,9 +76,26 @@ A single-cycle RV32I CPU integrating the formally-verified ALU, register file, d
 
 ---
 
+### ✅ Project 5 — RTL-to-GDSII Physical Design
+
+- **What it is:** the Project 3 RV32I ALU hardened to a manufacturable layout on the SkyWater sky130 open PDK, using LibreLane (OpenLane 2) and OpenROAD
+- **Sign-off:** nine-corner static timing analysis clean at a 33 ns period; **zero DRC, LVS, and antenna violations**
+- **Results:** 1,293 standard cells, 21,303 µm² core area, 31.5–56.3 MHz across PVT corners
+- **Debugging highlight:** investigated 208 timing-repair buffers and confirmed via a clock-period sweep that they serve max-slew/max-cap electrical rules rather than setup timing — the buffer count was invariant to the constraint
+- **Status:** hardened, signed off, documented
+- [Write-up](https://vutukuribanurohit02.github.io/fpga-portfolio/project5-physical-design/) · [Source](https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project5-physical-design)
+
+### 🔁 Project 6 — Polynomial Formal Verification (research reimplementation)
+
+- **What it is:** a reimplementation of the per-instruction BDD equivalence-checking methodology from Weingarten et al. (DATE 2024) and PolyMiR (NANOARCH 2023), retargeted to my RV32I ALU. Their toolchain (PSIM, SYMSIM, RMG) was never released, so the flow was reconstructed from the published method description using Yosys, py-aiger, and dd.
+- **Method:** opcode pinning → Yosys constant propagation to extract the per-instruction sub-circuit → AIG → ROBDD under a controlled variable order → node counting against the paper's published Table III
+- **Results:** AND = **97** and XOR = **161**, matching the published counts exactly. ADD measured 1553 against their 1327, but per-output-bit growth is exactly linear with closed form `3k + 2`, independently confirming the paper's Θ(n²) Addition-group bound.
+- **Methodological finding:** BDD node counts are unreproducible without a stated variable ordering. Unpinned hash seeds produced 6036 vs 6585 nodes across runs, and a grouped ordering exhausted 7 GB and failed to terminate on the same circuit that builds in 0.5 s interleaved.
+- **Status:** extraction and BDD construction working on 3 of 10 opcodes; reference-model generation (and therefore the equivalence check itself) not yet built
+- [Details](project6-pfv/README.md) · [Concepts primer](project6-pfv/CONCEPTS.md) · [Source](https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project6-pfv)
+
 ## Stretch Goals
 
-- **Research paper reimplementation** — applying the methodology from Weingarten, Datta, Kole & Drechsler, *"Complete and Efficient Verification for a RISC-V Processor Using Formal Verification,"* DATE 2024, to a self-built RV32I core: extending formal proofs beyond the ALU into full sequential correctness.
 - **Tiny Tapeout silicon submission** — fabricating a compact verified module on the SkyWater SKY130 process via the TTSKY26c shuttle.
 
 ---
