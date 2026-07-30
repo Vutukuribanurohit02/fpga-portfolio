@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project 6 — Polynomial Formal Verification · Banu Rohit Vutukuri</title>
+<meta name="description" content="A DATE 2024 verification methodology rebuilt from the paper alone. All ten RV32I ALU opcodes formally proven equivalent to an independent golden model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#030504;
+  --panel:#0a0e0b;
+  --panel-2:#0e1410;
+  --line:#1c2620;
+  --green:#76b900;
+  --green-dim:#4e7a02;
+  --green-glow:rgba(118,185,0,.14);
+  --gold:#d8b458;
+  --gold-dim:#8a7336;
+  --ink:#e8ede8;
+  --ink-2:#9aa89c;
+  --ink-3:#5c685e;
+  --red:#e0524d;
+  --sans:'Space Grotesk',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--green);color:var(--void)}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+.mono{font-family:var(--mono)}
+
+/* ---------- top nav ---------- */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(3,5,4,.86);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{font-family:var(--mono);font-size:.82rem;letter-spacing:.14em;color:var(--ink-2)}
+.brand b{color:var(--green);font-weight:600}
+.nav-links{display:flex;gap:26px;font-size:.85rem}
+.nav-links a{color:var(--ink-2)}
+.nav-links a:hover{color:var(--green);text-decoration:none}
+
+/* ---------- hero ---------- */
+.hero{padding:88px 0 64px;position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:-40% -20% auto;height:120%;
+  background:radial-gradient(ellipse at 68% 12%, var(--green-glow), transparent 55%);
+  pointer-events:none;
+}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:20px;
+}
+.eyebrow::before{content:"—— ";color:var(--gold-dim)}
+h1{
+  font-size:clamp(2.1rem,5vw,3.4rem);
+  font-weight:700;line-height:1.08;letter-spacing:-.015em;
+  max-width:17ch;
+}
+h1 em{font-style:normal;color:var(--green)}
+.hero-sub{
+  margin-top:22px;max-width:58ch;color:var(--ink-2);font-size:1.02rem;
+}
+.hero-sub b{color:var(--ink);font-weight:600}
+
+/* verdict strip */
+.verdict{
+  margin-top:40px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.verdict .chip{
+  font-family:var(--mono);font-size:.78rem;font-weight:500;
+  padding:7px 13px;border:1px solid var(--green-dim);border-radius:4px;
+  color:var(--green);background:rgba(118,185,0,.06);
+  letter-spacing:.06em;
+}
+.verdict .chip::before{content:"✓ ";color:var(--green)}
+.verdict-label{
+  font-family:var(--mono);font-size:.72rem;color:var(--ink-3);
+  letter-spacing:.2em;text-transform:uppercase;width:100%;margin-bottom:2px;
+}
+
+/* ---------- signature chart ---------- */
+.chart-frame{
+  margin:64px 0 0;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;
+  padding:34px 34px 26px;position:relative;
+}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.chart-title{font-weight:600;font-size:1.05rem}
+.chart-formula{font-family:var(--mono);font-size:.85rem;color:var(--gold)}
+.chart-sub{font-size:.85rem;color:var(--ink-2);margin-bottom:22px;max-width:64ch}
+.legend{display:flex;gap:22px;font-family:var(--mono);font-size:.72rem;color:var(--ink-2);margin-top:14px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:8px}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+.sw.g{background:var(--green)}
+.sw.r{background:var(--red);opacity:.75}
+#growth{width:100%;height:auto;display:block}
+.bar{fill:var(--green);opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+.bar.lit{opacity:.92;transform:none}
+.oom-path{stroke:var(--red);stroke-width:2;fill:none;stroke-dasharray:6 5;opacity:.7}
+.oom-tag{font-family:var(--mono);font-size:11px;fill:var(--red)}
+.ax{font-family:var(--mono);font-size:10px;fill:var(--ink-3)}
+
+/* ---------- sections ---------- */
+section{padding:74px 0;border-top:1px solid var(--line)}
+.sec-eyebrow{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;
+}
+h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:600;letter-spacing:-.01em;margin-bottom:18px;max-width:24ch}
+.lede{color:var(--ink-2);max-width:66ch;margin-bottom:34px}
+.lede b,.lede strong{color:var(--ink)}
+p+p{margin-top:14px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:8px}
+.pipe .step{
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:18px 16px;transition:transform .28s cubic-bezier(.2,.8,.25,1),border-color .28s,box-shadow .28s;
+}
+.pipe .step:hover{transform:translateY(-5px);border-color:var(--green-dim);box-shadow:0 14px 34px -18px var(--green-glow)}
+.step .k{font-family:var(--mono);font-size:.66rem;color:var(--gold);letter-spacing:.16em;text-transform:uppercase}
+.step .t{font-weight:600;margin:7px 0 5px;font-size:.95rem}
+.step .d{font-size:.8rem;color:var(--ink-2);line-height:1.5}
+.step .tool{font-family:var(--mono);font-size:.68rem;color:var(--green);margin-top:9px}
+
+/* results table */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:6px}
+th{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);
+}
+td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+td:first-child{font-family:var(--mono);color:var(--ink);font-weight:500}
+td .hit{color:var(--green);font-weight:600}
+td .near{color:var(--gold)}
+td .miss{color:var(--ink-3)}
+tr{transition:background .2s}
+tbody tr:hover{background:var(--panel)}
+.tbl-note{font-size:.8rem;color:var(--ink-3);margin-top:14px;max-width:70ch}
+.tbl-note .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.dot.g{background:var(--green)}.dot.a{background:var(--gold)}
+
+/* corrections */
+.correction{
+  background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:26px 28px;margin-top:20px;
+  transition:transform .28s cubic-bezier(.2,.8,.25,1),box-shadow .28s;
+}
+.correction:hover{transform:translateY(-4px);box-shadow:0 16px 40px -22px rgba(216,180,88,.25)}
+.correction .was{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--red);margin-bottom:8px;
+}
+.correction .was::before{content:"✗ "}
+.correction h3{font-size:1.08rem;font-weight:600;margin-bottom:10px}
+.correction p{font-size:.92rem;color:var(--ink-2)}
+.correction .proof{
+  margin-top:14px;font-family:var(--mono);font-size:.8rem;color:var(--green);
+  background:var(--void);border:1px solid var(--line);border-radius:6px;padding:12px 16px;
+  overflow-x:auto;white-space:pre;
+}
+
+/* ordering panel */
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.duel .side{
+  border:1px solid var(--line);border-radius:8px;padding:24px;background:var(--panel);
+  transition:transform .28s cubic-bezier(.2,.8,.25,1);
+}
+.duel .side:hover{transform:translateY(-4px)}
+.duel .side.win{border-color:var(--green-dim)}
+.duel .side.lose{border-color:#4a2320}
+.duel .ord{font-family:var(--mono);font-size:.8rem;color:var(--ink-2);margin-bottom:14px}
+.duel .big{font-size:2rem;font-weight:700;letter-spacing:-.02em}
+.duel .win .big{color:var(--green)}
+.duel .lose .big{color:var(--red)}
+.duel .cap{font-size:.8rem;color:var(--ink-3);margin-top:4px}
+
+/* code blocks */
+pre.code{
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:20px 22px;font-family:var(--mono);font-size:.82rem;line-height:1.7;
+  color:var(--ink-2);overflow-x:auto;margin-top:10px;
+}
+pre.code .c{color:var(--ink-3)}
+pre.code .g{color:var(--green)}
+
+/* spine */
+.spine{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:8px}
+.spine a{
+  display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:16px 15px;color:var(--ink);text-decoration:none;
+  transition:transform .28s cubic-bezier(.2,.8,.25,1),border-color .28s;
+}
+.spine a:hover{transform:translateY(-5px);border-color:var(--green-dim);text-decoration:none}
+.spine .pn{font-family:var(--mono);font-size:.66rem;color:var(--gold);letter-spacing:.16em}
+.spine .pt{font-weight:600;font-size:.86rem;margin-top:6px;line-height:1.35}
+.spine .ps{font-size:.72rem;color:var(--ink-3);margin-top:4px;font-family:var(--mono)}
+.spine a.here{border-color:var(--green);background:rgba(118,185,0,.05)}
+.spine a.next{border-style:dashed;color:var(--ink-2)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--ink-3);font-size:.82rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+footer a{color:var(--ink-2)}
+
+.btn-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+.btn{
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.05em;
+  padding:11px 20px;border-radius:6px;border:1px solid var(--green-dim);
+  color:var(--green);transition:transform .25s,background .25s;
+}
+.btn:hover{background:rgba(118,185,0,.08);transform:translateY(-2px);text-decoration:none}
+.btn.gold{border-color:var(--gold-dim);color:var(--gold)}
+.btn.gold:hover{background:rgba(216,180,88,.07)}
+
+@media(max-width:720px){
+  .duel{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .chart-frame{padding:22px 16px 18px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto}
+  .bar{opacity:.92;transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="brand"><b>BRV</b> · RTL / HARDWARE PORTFOLIO</span>
+    <div class="nav-links">
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#corrections">Corrections</a>
+      <a href="#ordering">Ordering</a>
+      <a href="../index.html">← Portfolio</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Project 06 · Research Reimplementation · DATE 2024</div>
+    <h1>Ten opcodes. <em>Proven</em>, not tested.</h1>
+    <p class="hero-sub">
+      The authors of a DATE&nbsp;2024 formal-verification paper never released their toolchain.
+      This project rebuilds their per-instruction BDD equivalence-checking methodology from the
+      paper alone — then goes one step further than reproduction:
+      <b>every operation of my RV32I ALU is formally proven equivalent to an independently
+      constructed golden model</b>, covering all 2<sup>64</sup> input combinations per opcode.
+    </p>
+
+    <div class="verdict">
+      <span class="verdict-label">Equivalence verdict · circuit vs independent reference model</span>
+      <span class="chip">ADD</span><span class="chip">SUB</span><span class="chip">AND</span>
+      <span class="chip">OR</span><span class="chip">XOR</span><span class="chip">SLT</span>
+      <span class="chip">SLTU</span><span class="chip">SLL</span><span class="chip">SRL</span>
+      <span class="chip">SRA</span>
+    </div>
+
+    <!-- signature: measured linear growth vs the exponential ghost -->
+    <div class="chart-frame">
+      <div class="chart-head">
+        <span class="chart-title">ADD — measured BDD size per output bit</span>
+        <span class="chart-formula mono">size(bit&nbsp;k) = 3k + 2</span>
+      </div>
+      <p class="chart-sub">
+        Thirty-two green bars: the real measurement, exactly linear at +3 nodes per bit.
+        The red curve: the same circuit under a grouped variable order — it exhausted
+        7&nbsp;GB and never terminated. This gap is the entire thesis of polynomial formal verification.
+      </p>
+      <svg id="growth" viewBox="0 0 940 300" role="img"
+           aria-label="Bar chart: BDD node count per output bit grows linearly from 3 to 95. A dashed red curve showing exponential growth under a bad variable order leaves the chart, labeled OOM at 7 gigabytes.">
+        <!-- axes -->
+        <line x1="46" y1="260" x2="920" y2="260" stroke="#1c2620" stroke-width="1"/>
+        <line x1="46" y1="20"  x2="46"  y2="260" stroke="#1c2620" stroke-width="1"/>
+        <text class="ax" x="40" y="264" text-anchor="end">0</text>
+        <text class="ax" x="40" y="146" text-anchor="end">48</text>
+        <text class="ax" x="40" y="30"  text-anchor="end">96</text>
+        <text class="ax" x="52"  y="278">bit 0</text>
+        <text class="ax" x="880" y="278">bit 31</text>
+        <g id="bars"></g>
+        <!-- exponential ghost: leaves the frame -->
+        <path class="oom-path" d="M 60 258 C 300 254, 520 240, 640 180 C 700 145, 740 90, 762 18"/>
+        <text class="oom-tag" x="700" y="16">grouped order → 7 GB, OOM-killed</text>
+      </svg>
+      <div class="legend">
+        <span><i class="sw g"></i>interleaved a₀,b₀,a₁,b₁,… — builds in 0.5 s</span>
+        <span><i class="sw r"></i>grouped a₀…a₃₁,b₀…b₃₁ — did not terminate</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project6-pfv">Source on GitHub</a>
+      <a class="btn gold" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/blob/main/project6-pfv/EQUIVALENCE.md">Equivalence write-up</a>
+      <a class="btn gold" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/blob/main/project6-pfv/CONCEPTS.md">Concepts primer</a>
+    </div>
+  </div>
+</header>
+
+<section id="method">
+  <div class="wrap">
+    <div class="sec-eyebrow">The reconstruction</div>
+    <h2>A method rebuilt from prose</h2>
+    <p class="lede">
+      Weingarten, Datta, Kole &amp; Drechsler (DATE&nbsp;2024; Table&nbsp;III from PolyMiR, NANOARCH&nbsp;2023)
+      verify a RISC-V processor instruction-by-instruction using Binary Decision Diagrams. Their
+      in-house tools — <span class="mono">PSIM</span>, <span class="mono">SYMSIM</span>,
+      <span class="mono">RMG</span> — were never published. Each was reconstructed
+      from the method description using open tools, and one of the substitutions is itself an argument:
+      the paper's ternary simulation with pinned opcodes and unknown data bits <b>is</b> constant
+      propagation, expressed in different tooling.
+    </p>
+    <div class="pipe">
+      <div class="step">
+        <div class="k">01 · Pin</div>
+        <div class="t">Opcode wrappers</div>
+        <div class="d">Ten modules, each tying <span class="mono">alu_op</span> to one constant. The synthesiser does the extraction, not hand-edited RTL.</div>
+        <div class="tool">alu_pinned.sv</div>
+      </div>
+      <div class="step">
+        <div class="k">02 · Extract</div>
+        <div class="t">Constant propagation</div>
+        <div class="d">Yosys deletes the nine unselected datapaths. The AIGER header proves it: 64 inputs remain, the 4 opcode bits are gone.</div>
+        <div class="tool">yosys · opt&nbsp;-full · aigmap</div>
+      </div>
+      <div class="step">
+        <div class="k">03 · Build</div>
+        <div class="t">ROBDD, ordered first</div>
+        <div class="d">Variables declared interleaved <em>before</em> construction, hash seed pinned — the two conditions that make counts reproducible.</div>
+        <div class="tool">py-aiger · dd</div>
+      </div>
+      <div class="step">
+        <div class="k">04 · Reference</div>
+        <div class="t">Golden model</div>
+        <div class="d">Built from ISA semantics with a <em>deliberately different</em> architecture: prefix carries, barrel shifter. Exhaustively self-validated first.</div>
+        <div class="tool">rmg.py · test_rmg.py</div>
+      </div>
+      <div class="step">
+        <div class="k">05 · Prove</div>
+        <div class="t">Pointer comparison</div>
+        <div class="d">ROBDDs are canonical: root equality is equivalence over all inputs. A fault-injected adder is caught with a concrete counterexample.</div>
+        <div class="tool">equiv.py</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <div class="sec-eyebrow">Reproduction</div>
+    <h2>Six published values, reproduced</h2>
+    <p class="lede">
+      Every row below is a formal equivalence proof against the golden model. The comparison against
+      the paper's Table&nbsp;III is a separate question — and an honest one: six values reproduce,
+      <b>SRL lands one node off 1431</b>, and no single counting convention fits all three
+      instruction groups. That inconsistency is a finding, not a failure.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Op</th><th>Table III</th><th>Sum per output</th><th>Manager nodes</th><th>Match</th><th>Equivalence</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AND</td><td>97</td><td>96</td><td><span class="hit">97</span></td><td><span class="hit">exact</span></td><td class="mono">proven</td></tr>
+        <tr><td>OR</td><td>97</td><td>96</td><td><span class="hit">97</span></td><td><span class="hit">exact</span></td><td class="mono">proven</td></tr>
+        <tr><td>XOR</td><td>161</td><td>96</td><td><span class="hit">161</span></td><td><span class="hit">exact</span></td><td class="mono">proven</td></tr>
+        <tr><td>SRL</td><td>1431</td><td><span class="near">1432</span></td><td>1275</td><td><span class="near">+1 node</span></td><td class="mono">proven</td></tr>
+        <tr><td>SRA</td><td>1396</td><td><span class="near">1401</span></td><td>1368</td><td><span class="near">+0.4%</span></td><td class="mono">proven</td></tr>
+        <tr><td>SLL</td><td>1632</td><td><span class="near">1640</span></td><td>1533</td><td><span class="near">+0.5%</span></td><td class="mono">proven</td></tr>
+        <tr><td>ADD</td><td>1327</td><td>1553</td><td>6585</td><td><span class="miss">+17%, open</span></td><td class="mono">proven</td></tr>
+        <tr><td>SUB</td><td>1415</td><td>1553</td><td>6585</td><td><span class="miss">+10%, open</span></td><td class="mono">proven</td></tr>
+        <tr><td>SLT</td><td>992</td><td>127</td><td>—</td><td><span class="miss">structural diff</span></td><td class="mono">proven</td></tr>
+        <tr><td>SLTU</td><td>809</td><td>127</td><td>—</td><td><span class="miss">structural diff</span></td><td class="mono">proven</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-note">
+      <span class="dot g"></span>Logic group matches under <em>manager nodes</em> ·
+      <span class="dot a"></span>shift group matches under <em>sum per output</em> ·
+      arithmetic matches neither. SLT/SLTU produce one comparison bit plus 31 constant zeros in my ALU;
+      the paper's larger figures suggest their Execute unit keeps the full subtractor live — a genuine
+      architectural difference, reported as such.
+    </p>
+  </div>
+</section>
+
+<section id="corrections">
+  <div class="wrap">
+    <div class="sec-eyebrow">Self-correction</div>
+    <h2>Two of my own explanations, disproved</h2>
+    <p class="lede">
+      The most credible part of this project is not the numbers that matched — it's the equivalence
+      machinery turning around and <b>falsifying two explanations I had already written down</b>.
+      Both corrections are proofs, not revisions of opinion.
+    </p>
+
+    <div class="correction">
+      <div class="was">Earlier claim — adder architecture explains the ADD gap</div>
+      <h3>Canonicity makes that impossible</h3>
+      <p>
+        An ROBDD is unique for a given function and variable order. So a Kogge-Stone
+        parallel-prefix network and a ripple-carry chain — sharing no internal structure — must
+        produce byte-identical BDDs. Measured directly: they do. The 17% gap to the paper's 1327
+        cannot be architectural, for any adder that computes addition.
+      </p>
+      <div class="proof">circuit  (ripple-carry) : 3, 5, 8, 11, … 95   sum = 1553
+reference (Kogge-Stone) : 3, 5, 8, 11, … 95   sum = 1553   <span class="g">identical</span></div>
+    </div>
+
+    <div class="correction">
+      <div class="was">Earlier claim — the exact AND/XOR matches validate the counting metric</div>
+      <h3>The paper's counts measure the construction path, not the function</h3>
+      <p>
+        As functions, 32-bit bitwise AND and XOR have <em>identical</em> BDDs — three nodes per
+        output bit. Yet building XOR by walking its 96-gate AIG yields 161, while AND yields 97.
+        Same function class, same order, different numbers: the metric counts intermediate BDDs
+        created during construction. Any convention reproducing the paper's 97-vs-161 distinction
+        is measuring that artefact, because at the function level there is no distinction to measure.
+      </p>
+      <div class="proof">AND as function : 96 sum · 97 manager
+XOR as function : 96 sum · 97 manager     <span class="g">identical BDDs</span>
+XOR via its AIG : 161 manager             construction-path artefact</div>
+    </div>
+  </div>
+</section>
+
+<section id="ordering">
+  <div class="wrap">
+    <div class="sec-eyebrow">Reproducibility finding</div>
+    <h2>A node count without its variable order is not a result</h2>
+    <p class="lede">
+      The same circuit, the same tool, the same function — separated only by the order in which
+      variables are declared. And a second trap underneath it: <span class="mono">py-aiger</span>
+      iterates inputs in hash order, which changes per process, so identical code produced
+      6036 nodes on one run and 6585 on the next until <span class="mono">PYTHONHASHSEED=0</span>
+      was pinned. The consequence generalises well beyond this project: <b>any published BDD node
+      count that omits its variable ordering is unreproducible — including Table&nbsp;III.</b>
+    </p>
+    <div class="duel">
+      <div class="side win">
+        <div class="ord">a₀, b₀, a₁, b₁, … a₃₁, b₃₁</div>
+        <div class="big">0.5 s</div>
+        <div class="cap">1553 nodes · one carry bit of memory per level</div>
+      </div>
+      <div class="side lose">
+        <div class="ord">a₀ … a₃₁, then b₀ … b₃₁</div>
+        <div class="big">∞</div>
+        <div class="cap">7 GB exhausted · OOM-killed · took WSL down with it</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-eyebrow">Reproduce it</div>
+    <h2>Two environments, one file between them</h2>
+    <p class="lede">
+      Yosys lives in a nix-shell; the BDD stack lives in a Python venv. They never share an
+      interpreter — the synthesiser writes AIGER to disk and Python reads it back.
+    </p>
+<pre class="code"><span class="c"># extract all ten sub-circuits (Yosys, inside the nix-shell)</span>
+nix-shell --run "./scripts/run_all.sh extract"
+
+<span class="c"># validate the reference model itself — 4,096 assignments per op</span>
+python3 scripts/test_rmg.py 6
+
+<span class="c"># prove all ten equivalences</span>
+./scripts/run_all.sh check
+<span class="g">=== 10 equivalent, 0 not equivalent ===</span></pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-eyebrow">One ALU, six stages</div>
+    <h2>Where this sits in the portfolio</h2>
+    <p class="lede">
+      The same RV32I ALU has now been carried through every stage of a real silicon flow —
+      each project deepening the verification story of a single block.
+    </p>
+    <div class="spine">
+      <a href="../project1-uart/"><span class="pn">P1</span><div class="pt">UART / APB Peripheral</div><div class="ps">RTL · FPGA</div></a>
+      <a href="../project2-async-fifo/"><span class="pn">P2</span><div class="pt">Async FIFO</div><div class="ps">formal CDC proof</div></a>
+      <a href="../project3-rv32i-alu/"><span class="pn">P3</span><div class="pt">RV32I ALU</div><div class="ps">11 properties proven</div></a>
+      <a href="../project4-rv32i-cpu/"><span class="pn">P4</span><div class="pt">Single-Cycle CPU</div><div class="ps">runs compiled C</div></a>
+      <a href="../project5-physical-design/"><span class="pn">P5</span><div class="pt">RTL → GDSII</div><div class="ps">9-corner sign-off</div></a>
+      <a class="here" href="#"><span class="pn">P6</span><div class="pt">Polynomial Formal Verification</div><div class="ps">10/10 proven</div></a>
+      <a class="next" href="#"><span class="pn">P7</span><div class="pt">Tiny Tapeout silicon</div><div class="ps">TTSKY26c · in flight</div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Banu Rohit Vutukuri · <a href="https://www.linkedin.com/in/banurohit-vutukuri/">LinkedIn</a> · <a href="https://github.com/Vutukuribanurohit02/fpga-portfolio">GitHub</a></span>
+    <span class="mono">Weingarten et&nbsp;al., DATE&nbsp;2024 · PolyMiR, NANOARCH&nbsp;2023</span>
+  </div>
+</footer>
+
+<script>
+// Signature chart: 32 bars from the real measurement, size(k)=3k+2 (bit0=3)
+(function(){
+  const g = document.getElementById('bars');
+  const sizes = [3];
+  for (let k=1;k<32;k++) sizes.push(3*k+2);
+  const x0=54, w=21, gap=6, base=260, max=96, h=240;
+  sizes.forEach((s,i)=>{
+    const bh = s/max*h;
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', x0+i*(w+gap));
+    r.setAttribute('y', base-bh);
+    r.setAttribute('width', w);
+    r.setAttribute('height', bh);
+    r.setAttribute('rx', 2);
+    r.setAttribute('class','bar');
+    g.appendChild(r);
+  });
+  const bars = g.querySelectorAll('.bar');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { bars.forEach(b=>b.classList.add('lit')); return; }
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting) return;
+      bars.forEach((b,i)=>setTimeout(()=>b.classList.add('lit'), i*28));
+      io.disconnect();
+    });
+  },{threshold:.3});
+  io.observe(document.getElementById('growth'));
+})();
+</script>
+</body>
+</html>
