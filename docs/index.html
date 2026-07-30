@@ -51,6 +51,29 @@
     <div class="sec-head reveal"><span class="sec-idx">01</span><h2>Projects</h2></div>
     <p class="lede reveal">Five projects, each one a deliberate step deeper into the stack — from a bus peripheral to a CPU running compiled C to a routed die. Built, verified, and where possible <strong>validated on physical hardware</strong>, not just simulated.</p>
 
+    <div class="proj reveal">
+      <div class="proj-rail"><span class="proj-num">06</span><span class="proj-dot"></span></div>
+      <div class="proj-body">
+        <div class="proj-top">
+          <h3>Polynomial Formal Verification &mdash; Research Reimplementation</h3>
+          <span class="badge">Research &middot; In progress</span>
+        </div>
+        <div class="proj-tags"><span>BDD</span><span>YOSYS</span><span>AIGER</span><span>PY-AIGER</span><span>FORMAL</span></div>
+        <p class="summary">A DATE&nbsp;2024 verification methodology rebuilt from the paper alone &mdash; the authors&rsquo; toolchain was never released. Published BDD node counts reproduced exactly on two instructions, and the paper&rsquo;s complexity bound re-derived from my own measurements.</p>
+        <ul>
+          <li>Per-instruction sub-circuit extraction by opcode pinning and constant propagation &rarr; AIG &rarr; ROBDD</li>
+          <li><strong>AND&nbsp;=&nbsp;97, XOR&nbsp;=&nbsp;161</strong> &mdash; exact matches against the published Table&nbsp;III</li>
+          <li>ADD per-bit growth measured as exactly linear, closed form <code>3k&nbsp;+&nbsp;2</code>, independently confirming the &Theta;(n&sup2;) bound</li>
+          <li>Found that BDD counts are <strong>unreproducible without a stated variable order</strong> &mdash; a bad order took the same circuit from 0.5&nbsp;s to 7&nbsp;GB and non-termination</li>
+        </ul>
+        <div class="proj-links">
+          <a class="featured" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/blob/main/project6-pfv/README.md">Full write-up &rarr;</a>
+          <a href="https://github.com/Vutukuribanurohit02/fpga-portfolio/blob/main/project6-pfv/CONCEPTS.md">Concepts primer</a>
+          <a href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project6-pfv">Source</a>
+        </div>
+      </div>
+    </div>
+
     <div class="proj featured-proj reveal">
       <div class="proj-rail"><span class="proj-num">05</span><span class="proj-dot"></span></div>
       <div class="proj-body">
