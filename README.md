@@ -85,14 +85,15 @@ A single-cycle RV32I CPU integrating the formally-verified ALU, register file, d
 - **Status:** hardened, signed off, documented
 - [Write-up](https://vutukuribanurohit02.github.io/fpga-portfolio/project5-physical-design/) · [Source](https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project5-physical-design)
 
-### 🔁 Project 6 — Polynomial Formal Verification (research reimplementation)
+### ✅ Project 6 — Polynomial Formal Verification (research reimplementation)
 
 - **What it is:** a reimplementation of the per-instruction BDD equivalence-checking methodology from Weingarten et al. (DATE 2024) and PolyMiR (NANOARCH 2023), retargeted to my RV32I ALU. Their toolchain (PSIM, SYMSIM, RMG) was never released, so the flow was reconstructed from the published method description using Yosys, py-aiger, and dd.
 - **Method:** opcode pinning → Yosys constant propagation to extract the per-instruction sub-circuit → AIG → ROBDD under a controlled variable order → node counting against the paper's published Table III
-- **Results:** AND = **97** and XOR = **161**, matching the published counts exactly. ADD measured 1553 against their 1327, but per-output-bit growth is exactly linear with closed form `3k + 2`, independently confirming the paper's Θ(n²) Addition-group bound.
+- **Results:** **all 10 ALU opcodes formally proven equivalent** to an independently built reference model (parallel-prefix and barrel-shifter, against the circuit's ripple-carry) — by ROBDD canonicity this covers all 2⁶⁴ input combinations per opcode. Six published node counts reproduced; SRL landed one node off 1431. Per-output-bit growth for ADD is exactly linear, closed form `3k + 2`, independently confirming the paper's Θ(n²) bound.
 - **Methodological finding:** BDD node counts are unreproducible without a stated variable ordering. Unpinned hash seeds produced 6036 vs 6585 nodes across runs, and a grouped ordering exhausted 7 GB and failed to terminate on the same circuit that builds in 0.5 s interleaved.
-- **Status:** extraction and BDD construction working on 3 of 10 opcodes; reference-model generation (and therefore the equivalence check itself) not yet built
-- [Details](project6-pfv/README.md) · [Concepts primer](project6-pfv/CONCEPTS.md) · [Source](https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project6-pfv)
+- **Corrections found:** the equivalence work disproved two of my own earlier explanations — adder architecture cannot affect BDD size (canonicity), and the paper's counts are construction-path artefacts, since 32-bit AND and XOR have identical BDDs as functions
+- **Status:** complete for the combinational ALU; reference model exhaustively self-validated before use
+- [Details](project6-pfv/README.md) · [Equivalence results](project6-pfv/EQUIVALENCE.md) · [Concepts primer](project6-pfv/CONCEPTS.md) · [Source](https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project6-pfv)
 
 ## Stretch Goals
 

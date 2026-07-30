@@ -56,15 +56,16 @@
       <div class="proj-body">
         <div class="proj-top">
           <h3>Polynomial Formal Verification &mdash; Research Reimplementation</h3>
-          <span class="badge">Research &middot; In progress</span>
+          <span class="badge">Research &middot; Complete</span>
         </div>
         <div class="proj-tags"><span>BDD</span><span>YOSYS</span><span>AIGER</span><span>PY-AIGER</span><span>FORMAL</span></div>
-        <p class="summary">A DATE&nbsp;2024 verification methodology rebuilt from the paper alone &mdash; the authors&rsquo; toolchain was never released. Published BDD node counts reproduced exactly on two instructions, and the paper&rsquo;s complexity bound re-derived from my own measurements.</p>
+        <p class="summary">A DATE&nbsp;2024 verification methodology rebuilt from the paper alone &mdash; the authors&rsquo; toolchain was never released. All ten ALU operations proven equivalent to an independently constructed golden model, and two of my own earlier explanations disproved in the process.</p>
         <ul>
-          <li>Per-instruction sub-circuit extraction by opcode pinning and constant propagation &rarr; AIG &rarr; ROBDD</li>
-          <li><strong>AND&nbsp;=&nbsp;97, XOR&nbsp;=&nbsp;161</strong> &mdash; exact matches against the published Table&nbsp;III</li>
-          <li>ADD per-bit growth measured as exactly linear, closed form <code>3k&nbsp;+&nbsp;2</code>, independently confirming the &Theta;(n&sup2;) bound</li>
-          <li>Found that BDD counts are <strong>unreproducible without a stated variable order</strong> &mdash; a bad order took the same circuit from 0.5&nbsp;s to 7&nbsp;GB and non-termination</li>
+                    <li>Per-instruction sub-circuit extraction by opcode pinning and constant propagation &rarr; AIG &rarr; ROBDD</li>
+          <li><strong>All 10 opcodes formally proven equivalent</strong> to a reference model built with a deliberately different architecture &mdash; by canonicity this covers all 2&#8310;&#8308; input combinations per opcode</li>
+          <li>Six published node counts reproduced; SRL landed <strong>one node</strong> off 1431</li>
+          <li>Disproved two of my own earlier explanations: adder architecture cannot affect BDD size, and the paper&rsquo;s counts measure the construction path rather than the function</li>
+          <li>BDD counts are <strong>unreproducible without a stated variable order</strong> &mdash; a bad order took the same circuit from 0.5&nbsp;s to 7&nbsp;GB and non-termination</li>
         </ul>
         <div class="proj-links">
           <a class="featured" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/blob/main/project6-pfv/README.md">Full write-up &rarr;</a>

@@ -59,10 +59,11 @@ attention, interviewer has heard nine RISC-V CPUs already today.
 > BDD from it. The BDD's node count is a fingerprint of the function, so you can compare
 > against the paper's published numbers.
 >
-> Their tools were never released, so I rebuilt the flow with Yosys and py-aiger. I
-> reproduced their AND and XOR node counts exactly — 97 and 161. For ADD I got 1553
-> against their 1327, but the per-bit growth came out exactly linear at 3k+2 nodes per
-> output bit, which confirms the O(n²) bound that's the paper's actual claim.
+> Their tools were never released, so I rebuilt the flow with Yosys and py-aiger. > I built a reference model from the ISA semantics and proved all ten ALU operations
+> equivalent to it — the reference uses parallel-prefix carries where the circuit
+> synthesises to ripple-carry, so agreement is a real result rather than building the
+> same thing twice. Six of the paper's published node counts reproduced; the shift
+> group came within half a percent, one of them a single node off.
 >
 > The interesting part was that BDD size depends entirely on variable ordering. With a
 > bad order the same circuit exhausted 7 GB and got OOM-killed. That means any published
@@ -353,10 +354,19 @@ meaningful. I'd rather say that than claim I've reverse-engineered their method.
 Saying this out loud is worth more than a clean result would be. It demonstrates that you
 audit your own successes, not just your failures.
 
-**The missing RMG.** State the scope precisely: "This implements extraction and BDD
-construction. Equivalence checking against an independent reference model is the next
-piece." Do not describe the project as complete equivalence checking — someone will ask
-where the reference model is.
+**The two corrections.** The strongest material in the project is that the equivalence
+work *disproved two of my own earlier explanations*:
+
+1. I had attributed the ADD gap partly to adder architecture. That is impossible —
+   ROBDDs are canonical, so a Kogge-Stone prefix network and a ripple-carry chain give
+   byte-identical BDDs. I measured it: both 1553, both `3k+2`.
+2. I had flagged the exact AND/XOR matches as possibly coincidental. They are. As
+   functions, 32-bit AND and XOR have *identical* BDDs (96 sum, 97 manager). Building
+   XOR by walking its AIG gives 161. Same function, same order, different count — so
+   the metric measures the construction path, not the function.
+
+Lead with these when asked what you learned. Being able to say "I was wrong, here is
+the proof" is worth more than any clean result.
 
 ---
 
