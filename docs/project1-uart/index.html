@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UART / APB Peripheral — Banu Rohit Vutukuri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <span class="brand">BANU ROHIT VUTUKURI <em>/ PROJECT 01</em></span>
+    <div class="nav-links">
+      <a href="#peripheral">Peripheral</a>
+      <a href="#verify">Verification</a>
+      <a href="#hardware">Hardware</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">RTL · APB bus interface · FPGA-proven</div>
+    <h1>A UART, wrapped in a proper bus interface.</h1>
+    <p class="hero-sub">The first building block toward a full SoC: a configurable UART transmitter/receiver behind a clean <strong>AMBA APB register interface</strong> — designed, self-checked in simulation, then <strong>programmed onto real hardware</strong> and driven from switches and LEDs.</p>
+    <div class="stat-band">
+      <div class="stat"><span class="v"><em data-count="44">0</em>/44</span><span class="k">TX checks passed</span></div>
+      <div class="stat"><span class="v"><em data-count="4">0</em>/4</span><span class="k">RX checks passed</span></div>
+      <div class="stat"><span class="v" data-count="16" data-format="int">0</span><span class="k">× oversampling</span></div>
+      <div class="stat"><span class="v">A7</span><span class="k">Artix-7 XC7A100T</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="peripheral">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">01</span><h2>The peripheral</h2></div>
+    <p class="lede reveal">A register map any SoC bus master can talk to, sitting on top of a UART datapath built from first principles.</p>
+
+    <div class="report reveal">
+      <div class="rhead"><span>APB REGISTER MAP</span><span class="ok">4 registers</span></div>
+      <table>
+        <thead><tr><th>Offset</th><th>Register</th><th>Access</th><th>Function</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">0x00</td><td>TXDATA</td><td>W</td><td>Byte to transmit</td></tr>
+          <tr><td class="cn">0x04</td><td>RXDATA</td><td>R</td><td>Last received byte</td></tr>
+          <tr><td class="cn">0x08</td><td>STATUS</td><td>R</td><td>TX busy / RX valid flags</td></tr>
+          <tr><td class="cn">0x0C</td><td>BAUDDIV</td><td>R/W</td><td>Baud rate divider</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="reveal">The datapath runs on a <strong>16× oversampled baud generator</strong> driving separate FSM-based TX and RX shift registers. The RX path carries a 2-flop input synchronizer on the incoming serial line — the standard defense against metastability on an asynchronous external signal, and a detail it's easy to skip until it bites you on real hardware.</p>
+  </div>
+</section>
+
+<section class="alt" id="verify">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">02</span><h2>Verification</h2></div>
+    <p class="lede reveal">Self-checking SystemVerilog testbenches, run across a spread of data patterns chosen to exercise edge bit-values: <code>0xA5</code> (alternating), <code>0x00</code>, <code>0xFF</code>, <code>0x55</code>.</p>
+    <div class="report reveal">
+      <div class="rhead"><span>TESTBENCH RESULTS</span><span class="ok">ALL PASS</span></div>
+      <table>
+        <thead><tr><th>Path</th><th>Patterns</th><th>Checks</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">TX (uart_tx_tb.sv)</td><td>0xA5, 0x00, 0xFF, 0x55</td><td>44</td><td class="ok-cell">44 / 44 passed</td></tr>
+          <tr><td class="cn">RX (uart_rx_tb.sv)</td><td>0xA5, 0x00, 0xFF, 0x55</td><td>4</td><td class="ok-cell">4 / 4 passed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="hardware">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>On real silicon</h2></div>
+    <p class="lede reveal">Simulation passing is necessary, not sufficient. The design was synthesized, implemented, and <strong>programmed onto a real Nexys A7 (Artix-7 XC7A100T)</strong> via a board-level wrapper — switches drive TXDATA, LEDs reflect STATUS, closing the loop from RTL to a physical part.</p>
+    <div class="tools reveal">
+      <span>SystemVerilog</span><span>AMBA APB</span><span>Vivado</span><span>Nexys A7 / Artix-7</span><span>XC7A100T</span>
+    </div>
+    <div class="cta-row reveal">
+      <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project1-uart">View source on GitHub</a>
+      <a class="btn ghost" href="../">← Full portfolio</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-in">
+    <span>PROJECT 01 / 05 · FPGA-PORTFOLIO</span>
+    <span>SYSTEMVERILOG · APB · NEXYS A7</span>
+    <span>BANU ROHIT VUTUKURI · PURDUE ECE</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const cio = new IntersectionObserver((e)=>{e.forEach(x=>{
+    if(!x.isIntersecting)return; const el=x.target; cio.unobserve(el);
+    const t=parseFloat(el.dataset.count); const isInt=el.dataset.format==='int'||Number.isInteger(t);
+    const t0=performance.now(),d=1200;
+    function tick(now){const p=Math.min((now-t0)/d,1);const v=t*(1-Math.pow(1-p,3));
+      el.textContent=isInt?Math.round(v).toLocaleString():v.toFixed(1); if(p<1)requestAnimationFrame(tick);}
+    requestAnimationFrame(tick);
+  });},{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+</script>
+
+</body>
+</html>

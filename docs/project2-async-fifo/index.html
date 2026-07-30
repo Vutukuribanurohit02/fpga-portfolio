@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async FIFO — Formal CDC Proof — Banu Rohit Vutukuri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <span class="brand">BANU ROHIT VUTUKURI <em>/ PROJECT 02</em></span>
+    <div class="nav-links">
+      <a href="#arch">Architecture</a>
+      <a href="#formal">Formal proof</a>
+      <a href="#bug">The bug</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Clock-domain crossing · formally proven, not just simulated</div>
+    <h1>The FIFO everyone simulates.<br><span class="accent">This one's proven.</span></h1>
+    <p class="hero-sub">A dual-clock async FIFO where the no-overflow safety property is <strong>formally proven</strong> — not just exercised by a testbench that happened not to find a counterexample. This is the verification most student CDC designs skip entirely.</p>
+    <div class="stat-band">
+      <div class="stat"><span class="v"><em data-count="1">0</em>/1</span><span class="k">safety property proven</span></div>
+      <div class="stat"><span class="v" data-count="20" data-format="int">0</span><span class="k">BMC depth</span></div>
+      <div class="stat"><span class="v"><em data-count="121">0</em></span><span class="k">writes · 121 reads</span></div>
+      <div class="stat"><span class="v"><em>0</em></span><span class="k">mismatches</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">01</span><h2>Architecture</h2></div>
+    <p class="lede reveal">The <strong>Cummings SNUG 2002</strong> dual-clock design — the reference architecture nearly every real async FIFO in industry traces back to.</p>
+    <ul style="list-style:none;max-width:680px;margin-bottom:32px;">
+      <li style="color:var(--dim);font-weight:300;font-size:15px;padding:6px 0 6px 22px;position:relative;line-height:1.7;"><span style="position:absolute;left:0;color:var(--green);">▸</span>Gray-code pointer synchronization — binary pointers change multiple bits per increment, which is unsafe to sample across a clock boundary; Gray code guarantees only one bit ever changes</li>
+      <li style="color:var(--dim);font-weight:300;font-size:15px;padding:6px 0 6px 22px;position:relative;line-height:1.7;"><span style="position:absolute;left:0;color:var(--green);">▸</span>2-flop synchronizers on every signal crossing between the write-clock and read-clock domains, the standard metastability guard</li>
+      <li style="color:var(--dim);font-weight:300;font-size:15px;padding:6px 0 6px 22px;position:relative;line-height:1.7;"><span style="position:absolute;left:0;color:var(--green);">▸</span>Independent 100 MHz write-side and 66 MHz read-side clock domains, genuinely asynchronous to each other</li>
+    </ul>
+  </div>
+</section>
+
+<section class="alt" id="formal">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">02</span><h2>Formal proof</h2></div>
+    <p class="lede reveal">The no-overflow safety property proven via <strong>SymbiYosys/Boolector</strong>, bounded model checking to depth 20 — the property holds across every reachable state the solver can explore that deep, not just the states a directed testbench happened to hit.</p>
+    <div class="report reveal">
+      <div class="rhead"><span>SYMBIYOSYS BMC RESULT</span><span class="ok">PASS</span></div>
+      <table>
+        <thead><tr><th>Property</th><th>Solver</th><th>Depth</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">no_overflow</td><td>Boolector</td><td>20</td><td class="ok-cell">Proven</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="reveal">Alongside the formal proof, a self-checking testbench exercised both domains independently: <strong>121 writes, 121 reads, 0 mismatches</strong> across the full 100 MHz / 66 MHz clock split.</p>
+  </div>
+</section>
+
+<section id="bug">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>The bug that mattered more than the proof</h2></div>
+    <div class="findings reveal">
+      <div class="finding good">
+        <span class="ftag">Caught and fixed</span>
+        <p>The first proof attempt <strong>passed</strong> — and was wrong. Unresolved hierarchical signal references meant the solver was checking a property that was structurally disconnected from the real design: a <strong>vacuous proof</strong>, one that reports success because it's checking nothing.</p>
+      </div>
+      <div class="finding good">
+        <span class="ftag">The lesson</span>
+        <p>A vacuous proof is worse than no proof — it actively creates false confidence. Fixing the hierarchical reference and re-running produced a proof that actually constrains the design. This exact lesson was carried forward and applied when auditing Project 4's CPU formal proofs, where two more vacuous proofs were caught before being trusted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="tools reveal">
+      <span>SystemVerilog</span><span>SymbiYosys</span><span>Boolector</span><span>Gray-code CDC</span><span>Bounded Model Checking</span>
+    </div>
+    <div class="cta-row reveal">
+      <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project2-async-fifo">View source on GitHub</a>
+      <a class="btn ghost" href="../">← Full portfolio</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-in">
+    <span>PROJECT 02 / 05 · FPGA-PORTFOLIO</span>
+    <span>SYMBIYOSYS · BOOLECTOR · CDC</span>
+    <span>BANU ROHIT VUTUKURI · PURDUE ECE</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const cio = new IntersectionObserver((e)=>{e.forEach(x=>{
+    if(!x.isIntersecting)return; const el=x.target; cio.unobserve(el);
+    const t=parseFloat(el.dataset.count); const isInt=el.dataset.format==='int'||Number.isInteger(t);
+    const t0=performance.now(),d=1200;
+    function tick(now){const p=Math.min((now-t0)/d,1);const v=t*(1-Math.pow(1-p,3));
+      el.textContent=isInt?Math.round(v).toLocaleString():v.toFixed(1); if(p<1)requestAnimationFrame(tick);}
+    requestAnimationFrame(tick);
+  });},{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+</script>
+
+</body>
+</html>

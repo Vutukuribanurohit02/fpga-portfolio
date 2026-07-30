@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Single-Cycle RV32I CPU — Banu Rohit Vutukuri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <span class="brand">BANU ROHIT VUTUKURI <em>/ PROJECT 04</em></span>
+    <div class="nav-links">
+      <a href="#datapath">Datapath</a>
+      <a href="#toolchain">Toolchain</a>
+      <a href="#formal">Formal proof</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">RV32I core · runs compiled C</div>
+    <h1>Proven by compiling real C<br>and <span class="accent">running it.</span></h1>
+    <p class="hero-sub">A single-cycle RV32I CPU integrating three previously verified pieces — ALU, register file, and control unit — into a working processor. The final proof isn't a testbench claim; it's a <strong>compiled C program actually executing</strong> on the design.</p>
+    <div class="stat-band">
+      <div class="stat"><span class="v">RV32I</span><span class="k">full base instruction set</span></div>
+      <div class="stat"><span class="v"><em data-count="2">0</em></span><span class="k">vacuous proofs caught</span></div>
+      <div class="stat"><span class="v">GCC</span><span class="k">cross-toolchain from source</span></div>
+      <div class="stat"><span class="v">C</span><span class="k">bubble-sort, compiled and run</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="datapath">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">01</span><h2>Datapath</h2></div>
+    <p class="lede reveal">Not built from scratch — assembled from pieces that were each independently verified first, then integrated and re-checked as a whole.</p>
+    <div class="flow-rail reveal">
+      <span class="step hot">formally-verified ALU</span>
+      <span class="step">register file</span>
+      <span class="step">decoder</span>
+      <span class="step hot">control unit</span>
+      <span class="step">single-cycle datapath</span>
+    </div>
+    <p class="reveal">The ALU integrated here is the exact same block from <a href="../project3-rv32i-alu/">Project 3</a>, formally proven across all ten operations before it was ever wired into a CPU.</p>
+  </div>
+</section>
+
+<section class="alt" id="toolchain">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">02</span><h2>The proof that counts</h2></div>
+    <p class="lede reveal">A CPU that passes a testbench is a claim. A CPU that runs a program you didn't write specifically for it is evidence.</p>
+    <p class="reveal">A bare-metal <strong>RISC-V GCC cross-toolchain was built from source</strong> — not installed from a package manager — targeting this specific core. A compiled C <strong>bubble-sort program</strong> was then run end to end on the CPU, from reset through program completion, with correct results at the end. That closes the loop from "the RTL simulates correctly" to "this is a computer that runs software."</p>
+    <div class="tools reveal">
+      <span>RISC-V GCC (built from source)</span><span>Bare-metal toolchain</span><span>C bubble-sort</span>
+    </div>
+  </div>
+</section>
+
+<section id="formal">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>Formal verification, and catching itself lying twice</h2></div>
+    <p class="lede reveal">Beyond running software, three specific properties were formally verified against independent reference computations.</p>
+    <div class="report reveal">
+      <div class="rhead"><span>FORMAL PROPERTIES</span><span class="ok">VERIFIED</span></div>
+      <table>
+        <thead><tr><th>Property</th><th>Checked against</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">ALU-op selection</td><td>Independent reference computation</td></tr>
+          <tr><td class="cn">Branch / next-PC logic</td><td>Independent reference computation</td></tr>
+          <tr><td class="cn">x0 hardwired-to-zero invariant</td><td>Independent reference computation</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="findings reveal">
+      <div class="finding good">
+        <span class="ftag">Applied lesson</span>
+        <p><strong>Two vacuous formal proofs were caught and fixed</strong> before trusting these results — directly applying what Project 2's async FIFO taught: a proof that reports success while checking a structurally disconnected property is worse than no proof at all. Auditing every "PASS" for vacuousness is now a standing step, not an afterthought.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-row reveal">
+      <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project4-rv32i-cpu">View source on GitHub</a>
+      <a class="btn ghost" href="../">← Full portfolio</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-in">
+    <span>PROJECT 04 / 05 · FPGA-PORTFOLIO</span>
+    <span>RISC-V · RV32I · SYSTEMVERILOG</span>
+    <span>BANU ROHIT VUTUKURI · PURDUE ECE</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const cio = new IntersectionObserver((e)=>{e.forEach(x=>{
+    if(!x.isIntersecting)return; const el=x.target; cio.unobserve(el);
+    const t=parseFloat(el.dataset.count); const isInt=el.dataset.format==='int'||Number.isInteger(t);
+    const t0=performance.now(),d=1200;
+    function tick(now){const p=Math.min((now-t0)/d,1);const v=t*(1-Math.pow(1-p,3));
+      el.textContent=isInt?Math.round(v).toLocaleString():v.toFixed(1); if(p<1)requestAnimationFrame(tick);}
+    requestAnimationFrame(tick);
+  });},{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+</script>
+
+</body>
+</html>

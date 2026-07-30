@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RV32I ALU — Formally Verified — Banu Rohit Vutukuri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <span class="brand">BANU ROHIT VUTUKURI <em>/ PROJECT 03</em></span>
+    <div class="nav-links">
+      <a href="#ops">Operations</a>
+      <a href="#formal">Formal proof</a>
+      <a href="#bug">The bug</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Combinational RTL · exhaustively proven</div>
+    <h1>Every opcode.<br><span class="accent">Every operand. Proven.</span></h1>
+    <p class="hero-sub">All ten RV32I arithmetic operations, verified two ways: a self-checking functional testbench for confidence, and a <strong>formal proof covering every opcode and operand combination</strong> for certainty. This is the same ALU that was later hardened to routed silicon in Project 5.</p>
+    <div class="stat-band">
+      <div class="stat"><span class="v"><em data-count="527">0</em>/527</span><span class="k">functional checks passed</span></div>
+      <div class="stat"><span class="v"><em data-count="11">0</em>/11</span><span class="k">properties formally proven</span></div>
+      <div class="stat"><span class="v" data-count="10" data-format="int">0</span><span class="k">RV32I operations</span></div>
+      <div class="stat"><span class="v">4-bit</span><span class="k">opcode encoding</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="ops">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">01</span><h2>The operations</h2></div>
+    <p class="lede reveal">A clean 4-bit opcode drives ten operations plus a zero flag — the full arithmetic core an RV32I R-type and I-type datapath needs.</p>
+    <div class="report reveal">
+      <div class="rhead"><span>ALU OPERATION SET</span><span class="ok">10 / 10 implemented</span></div>
+      <table>
+        <thead><tr><th>Group</th><th>Operations</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">Logic</td><td>AND, OR, XOR</td></tr>
+          <tr><td class="cn">Addition</td><td>ADD</td></tr>
+          <tr><td class="cn">Subtraction / compare</td><td>SUB, SLT, SLTU</td></tr>
+          <tr><td class="cn">Shift</td><td>SLL, SRL</td></tr>
+          <tr><td class="cn">Flag</td><td>zero output</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="formal">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">02</span><h2>Two layers of verification</h2></div>
+    <p class="lede reveal">Simulation for confidence, formal for certainty — the same discipline every project on this portfolio follows.</p>
+    <div class="report reveal">
+      <div class="rhead"><span>VERIFICATION RESULTS</span><span class="ok">ALL PASS</span></div>
+      <table>
+        <thead><tr><th>Method</th><th>Tool</th><th>Coverage</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td class="cn">Self-checking functional TB</td><td>SystemVerilog</td><td>All 10 ops, boundary values</td><td class="ok-cell">527 / 527 passed</td></tr>
+          <tr><td class="cn">Formal proof</td><td>SymbiYosys / Boolector</td><td>Every opcode × every operand combination</td><td class="ok-cell">11 / 11 proven</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="bug">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>The false counterexample</h2></div>
+    <div class="findings reveal">
+      <div class="finding good">
+        <span class="ftag">Caught and diagnosed</span>
+        <p>The SRA property's formal proof reported a <strong>counterexample</strong> — but the failing input, when hand-traced, didn't actually violate the specification. The counterexample was false, not a real design bug.</p>
+      </div>
+      <div class="finding good">
+        <span class="ftag">Root cause</span>
+        <p>Traced to a <strong>Boolector SMT-translation quirk</strong> on variable-shift arithmetic right shift — the solver's bit-vector encoding of a variable shift amount interacted with the sign-extension logic in a way that produced a spurious failing trace. Diagnosing this required distinguishing "the solver found a real bug" from "the solver's translation of the problem has a gap," which is a genuinely different skill from writing the RTL in the first place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="tools reveal">
+      <span>SystemVerilog</span><span>SymbiYosys</span><span>Boolector</span><span>SMT solving</span>
+    </div>
+    <div class="cta-row reveal">
+      <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project3-rv32i-alu">View source on GitHub</a>
+      <a class="btn ghost" href="../project5-physical-design/">See it hardened to silicon →</a>
+      <a class="btn ghost" href="../">← Full portfolio</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-in">
+    <span>PROJECT 03 / 05 · FPGA-PORTFOLIO</span>
+    <span>SYSTEMVERILOG · SYMBIYOSYS · BOOLECTOR</span>
+    <span>BANU ROHIT VUTUKURI · PURDUE ECE</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const cio = new IntersectionObserver((e)=>{e.forEach(x=>{
+    if(!x.isIntersecting)return; const el=x.target; cio.unobserve(el);
+    const t=parseFloat(el.dataset.count); const isInt=el.dataset.format==='int'||Number.isInteger(t);
+    const t0=performance.now(),d=1200;
+    function tick(now){const p=Math.min((now-t0)/d,1);const v=t*(1-Math.pow(1-p,3));
+      el.textContent=isInt?Math.round(v).toLocaleString():v.toFixed(1); if(p<1)requestAnimationFrame(tick);}
+    requestAnimationFrame(tick);
+  });},{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+</script>
+
+</body>
+</html>
