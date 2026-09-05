@@ -16,6 +16,31 @@ module rv32i_cpu #(
     output logic [31:0] data_wdata,
     input  logic [31:0] data_rdata
 
+`ifdef RISCV_FORMAL
+    ,
+    output logic        rvfi_valid,
+    output logic [63:0] rvfi_order,
+    output logic [31:0] rvfi_insn,
+    output logic        rvfi_trap,
+    output logic        rvfi_halt,
+    output logic        rvfi_intr,
+    output logic [1:0]  rvfi_mode,
+    output logic [1:0]  rvfi_ixl,
+    output logic [4:0]  rvfi_rs1_addr,
+    output logic [4:0]  rvfi_rs2_addr,
+    output logic [31:0] rvfi_rs1_rdata,
+    output logic [31:0] rvfi_rs2_rdata,
+    output logic [4:0]  rvfi_rd_addr,
+    output logic [31:0] rvfi_rd_wdata,
+    output logic [31:0] rvfi_pc_rdata,
+    output logic [31:0] rvfi_pc_wdata,
+    output logic [31:0] rvfi_mem_addr,
+    output logic [3:0]  rvfi_mem_rmask,
+    output logic [3:0]  rvfi_mem_wmask,
+    output logic [31:0] rvfi_mem_rdata,
+    output logic [31:0] rvfi_mem_wdata
+`endif
+
 `ifdef FORMAL
     // Formal-only observation ports. Wired by same-scope assigns below so
     // proofs bind without hierarchical dot-paths.
@@ -191,6 +216,53 @@ module rv32i_cpu #(
     assign dbg_rs1_data     = rs1_data;
     assign dbg_branch_taken = branch_taken;
     assign dbg_pc_next      = pc_next;
+`endif
+
+`ifdef RISCV_FORMAL
+    // Single-cycle: exactly one instruction retires per clock once out of
+    // reset, so rvfi_valid is simply "not in reset" and order is a counter.
+    logic [3:0] ld_rmask;
+    always_comb begin
+        case (funct3)
+            3'b000, 3'b100: ld_rmask = 4'b0001 << byte_off;  // LB / LBU
+            3'b001, 3'b101: ld_rmask = 4'b0011 << byte_off;  // LH / LHU
+            3'b010:         ld_rmask = 4'b1111;              // LW
+            default:        ld_rmask = 4'b0000;
+        endcase
+    end
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            rvfi_valid <= 1'b0;
+            rvfi_order <= 64'd0;
+        end else begin
+            rvfi_valid <= 1'b1;
+            if (rvfi_valid) rvfi_order <= rvfi_order + 64'd1;
+        end
+    end
+
+    assign rvfi_insn      = instr;
+    assign rvfi_trap      = 1'b0;
+    assign rvfi_halt      = 1'b0;
+    assign rvfi_intr      = 1'b0;
+    assign rvfi_mode      = 2'd3;
+    assign rvfi_ixl       = 2'd1;
+
+    assign rvfi_rs1_addr  = rs1_addr;
+    assign rvfi_rs2_addr  = rs2_addr;
+    assign rvfi_rs1_rdata = rs1_data;
+    assign rvfi_rs2_rdata = rs2_data;
+    assign rvfi_rd_addr   = reg_write ? rd_addr : 5'd0;
+    assign rvfi_rd_wdata  = (reg_write && rd_addr != 5'd0) ? rd_data : 32'd0;
+
+    assign rvfi_pc_rdata  = pc;
+    assign rvfi_pc_wdata  = pc_next;
+
+    assign rvfi_mem_addr  = data_addr;
+    assign rvfi_mem_rmask = mem_read ? ld_rmask : 4'b0000;
+    assign rvfi_mem_wmask = data_wstrb;
+    assign rvfi_mem_rdata = data_rdata;
+    assign rvfi_mem_wdata = data_wdata;
 `endif
 
 endmodule
