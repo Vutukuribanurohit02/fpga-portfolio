@@ -18,7 +18,7 @@ module pc_formal (
     logic        branch_taken;
     logic [31:0] pc_next;
 
-    rv32i_cpu_formal #(.MEM_BYTES(8192), .RESET_PC(32'h0)) dut (
+    rv32i_cpu #(.RESET_PC(32'h0)) dut (
         .clk(clk), .rst_n(rst_n),
         .dbg_funct3(funct3), .dbg_branch(branch), .dbg_jump(jump), .dbg_jalr(jalr),
         .dbg_alu_result(alu_result), .dbg_pc(pc), .dbg_imm(imm),

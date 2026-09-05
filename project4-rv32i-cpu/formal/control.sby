@@ -11,5 +11,5 @@ read_verilog -sv control_bind.sv
 prep -top control_formal
 
 [files]
-control.sv
+../rtl/control.sv
 control_bind.sv

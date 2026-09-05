@@ -11,5 +11,5 @@ read_verilog -sv regfile_bind.sv
 prep -top regfile
 
 [files]
-regfile.sv
+../rtl/regfile.sv
 regfile_bind.sv

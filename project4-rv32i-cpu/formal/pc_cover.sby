@@ -6,20 +6,18 @@ depth 2
 smtbmc boolector
 
 [script]
-read_verilog -sv rv32i_cpu_formal.sv
+read_verilog -sv -DFORMAL rv32i_cpu.sv
 read_verilog -sv rv32i_alu.sv
 read_verilog -sv regfile.sv
 read_verilog -sv decoder.sv
 read_verilog -sv control.sv
-read_verilog -sv mem.sv
 read_verilog -sv pc_bind.sv
 prep -top pc_formal
 
 [files]
-rv32i_cpu_formal.sv
-rv32i_alu.sv
-regfile.sv
-decoder.sv
-control.sv
-mem.sv
+../rtl/rv32i_cpu.sv
+../rtl/rv32i_alu.sv
+../rtl/regfile.sv
+../rtl/decoder.sv
+../rtl/control.sv
 pc_bind.sv

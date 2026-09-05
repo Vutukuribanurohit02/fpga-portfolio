@@ -17,6 +17,22 @@ module rv32i_cpu #(
     output logic        data_write,
     output logic [31:0] data_wdata,
     input  logic [31:0] data_rdata
+
+`ifdef FORMAL
+    // Formal-only observation ports. Wired by same-scope assigns below so
+    // proofs bind without hierarchical dot-paths.
+    ,
+    output logic [2:0]  dbg_funct3,
+    output logic        dbg_branch,
+    output logic        dbg_jump,
+    output logic        dbg_jalr,
+    output logic [31:0] dbg_alu_result,
+    output logic [31:0] dbg_pc,
+    output logic [31:0] dbg_imm,
+    output logic [31:0] dbg_rs1_data,
+    output logic        dbg_branch_taken,
+    output logic [31:0] dbg_pc_next
+`endif
 );
 
     // ---- Program Counter ----
@@ -127,5 +143,18 @@ module rv32i_cpu #(
         else                rd_data = alu_result;         // ALU op
     end
 
+
+`ifdef FORMAL
+    assign dbg_funct3       = funct3;
+    assign dbg_branch       = branch;
+    assign dbg_jump         = jump;
+    assign dbg_jalr         = jalr;
+    assign dbg_alu_result   = alu_result;
+    assign dbg_pc           = pc;
+    assign dbg_imm          = imm;
+    assign dbg_rs1_data     = rs1_data;
+    assign dbg_branch_taken = branch_taken;
+    assign dbg_pc_next      = pc_next;
+`endif
 
 endmodule
