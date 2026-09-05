@@ -51,6 +51,28 @@
     <div class="sec-head reveal"><span class="sec-idx">01</span><h2>Projects</h2></div>
     <p class="lede reveal">Five projects, each one a deliberate step deeper into the stack — from a bus peripheral to a CPU running compiled C to a routed die. Built, verified, and where possible <strong>validated on physical hardware</strong>, not just simulated.</p>
 
+    <div class="proj featured-proj reveal">
+      <div class="proj-rail"><span class="proj-num">07</span><span class="proj-dot"></span></div>
+      <div class="proj-body">
+        <div class="proj-top">
+          <h3>Tiny Tapeout &mdash; RV32I ALU on a Shared Wafer</h3>
+          <span class="badge silicon">Silicon &middot; Signed off</span>
+        </div>
+        <div class="proj-tags"><span>TINY TAPEOUT</span><span>LIBRELANE</span><span>SKY130</span><span>COCOTB</span><span>STA</span></div>
+        <p class="summary">The same formally verified ALU, wrapped for the TTSKY26c shuttle &mdash; <strong>101 signals onto 24 pins</strong>, hardened with a real clock tree, and closed with positive slack on every path.</p>
+        <ul>
+          <li>Byte-addressed register interface instead of a serialisation FSM &mdash; no protocol state to desynchronise, 68 flip-flops the cost</li>
+          <li>Accumulate write address creates the design's only <strong>reg-to-reg arc</strong>, closing at +10.49 ns</li>
+          <li>Caught a <strong>&minus;2.19 ns setup violation</strong> that CI reported as green &mdash; found in <code>metrics.csv</code>, fixed by relaxing the clock to 25 ns</li>
+          <li>Sign-off: setup +0.425 ns, hold +0.117 ns, zero DRC/LVS/antenna, 10/10 tests at RTL <em>and</em> gate level</li>
+        </ul>
+        <div class="proj-links">
+          <a class="featured" href="project7-tiny-tapeout/">Full write-up with die render &rarr;</a>
+          <a href="https://github.com/Vutukuribanurohit02/ttsky26c-rv32i-alu">Source</a>
+        </div>
+      </div>
+    </div>
+
     <div class="proj reveal">
       <div class="proj-rail"><span class="proj-num">06</span><span class="proj-dot"></span></div>
       <div class="proj-body">
