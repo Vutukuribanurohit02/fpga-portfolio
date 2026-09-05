@@ -96,6 +96,9 @@ module rv32i_cpu #(
         .is_lui(is_lui), .is_auipc(is_auipc)
     );
 
+    logic [31:0] mem_vaddr;
+    logic        trap_insn_addr, trap_load_addr, trap_store_addr, trap;
+
     // ---- Register file ----
     logic [31:0] rs1_data, rs2_data, rd_data;
 
@@ -103,7 +106,7 @@ module rv32i_cpu #(
         .clk(clk), .rst_n(rst_n),
         .rs1_addr(rs1_addr), .rs2_addr(rs2_addr),
         .rs1_data(rs1_data), .rs2_data(rs2_data),
-        .we(reg_write), .rd_addr(rd_addr), .rd_data(rd_data)
+        .we(reg_write && !trap), .rd_addr(rd_addr), .rd_data(rd_data)
     );
 
     // ---- ALU ----
@@ -148,6 +151,17 @@ module rv32i_cpu #(
             pc_next = pc_plus4;
     end
 
+    // ---- Trap detection (RV32I: misaligned instruction and data addresses) ----
+    assign mem_vaddr      = alu_result;
+    assign trap_insn_addr = (jump || branch_taken) && (pc_next[1:0] != 2'b00);
+    assign trap_load_addr = mem_read && (
+                              (funct3 == 3'b001 || funct3 == 3'b101) ? mem_vaddr[0] :
+                              (funct3 == 3'b010)                     ? |mem_vaddr[1:0] : 1'b0);
+    assign trap_store_addr = mem_write && (
+                              (funct3 == 3'b001) ? mem_vaddr[0] :
+                              (funct3 == 3'b010) ? |mem_vaddr[1:0] : 1'b0);
+    assign trap = trap_insn_addr || trap_load_addr || trap_store_addr;
+
     // ---- Data memory interface ----
     logic [31:0] mem_rdata;
     logic [1:0] byte_off;
@@ -158,7 +172,7 @@ module rv32i_cpu #(
     always_comb begin
         data_wstrb = 4'b0000;
         data_wdata = 32'b0;
-        if (mem_write) begin
+        if (mem_write && !trap) begin
             case (funct3)
                 3'b000: begin
                     data_wstrb = 4'b0001 << byte_off;
@@ -242,7 +256,7 @@ module rv32i_cpu #(
     end
 
     assign rvfi_insn      = instr;
-    assign rvfi_trap      = 1'b0;
+    assign rvfi_trap      = trap;
     assign rvfi_halt      = 1'b0;
     assign rvfi_intr      = 1'b0;
     assign rvfi_mode      = 2'd3;
@@ -252,15 +266,15 @@ module rv32i_cpu #(
     assign rvfi_rs2_addr  = rs2_addr;
     assign rvfi_rs1_rdata = rs1_data;
     assign rvfi_rs2_rdata = rs2_data;
-    assign rvfi_rd_addr   = reg_write ? rd_addr : 5'd0;
-    assign rvfi_rd_wdata  = (reg_write && rd_addr != 5'd0) ? rd_data : 32'd0;
+    assign rvfi_rd_addr   = (reg_write && !trap) ? rd_addr : 5'd0;
+    assign rvfi_rd_wdata  = (reg_write && !trap && rd_addr != 5'd0) ? rd_data : 32'd0;
 
     assign rvfi_pc_rdata  = pc;
     assign rvfi_pc_wdata  = pc_next;
 
     assign rvfi_mem_addr  = data_addr;
-    assign rvfi_mem_rmask = mem_read ? ld_rmask : 4'b0000;
-    assign rvfi_mem_wmask = data_wstrb;
+    assign rvfi_mem_rmask = (mem_read && !trap) ? ld_rmask : 4'b0000;
+    assign rvfi_mem_wmask = trap ? 4'b0000 : data_wstrb;
     assign rvfi_mem_rdata = data_rdata;
     assign rvfi_mem_wdata = data_wdata;
 `endif
