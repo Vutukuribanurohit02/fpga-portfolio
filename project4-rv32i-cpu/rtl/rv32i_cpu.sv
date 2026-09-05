@@ -4,7 +4,19 @@ module rv32i_cpu #(
     parameter logic [31:0] RESET_PC = 32'h0
 )(
     input  logic clk,
-    input  logic rst_n
+    input  logic rst_n,
+
+    // Instruction fetch
+    output logic [31:0] instr_addr,
+    input  logic [31:0] instr_data,
+
+    // Data memory
+    output logic [31:0] data_addr,
+    output logic [2:0]  data_funct3,
+    output logic        data_read,
+    output logic        data_write,
+    output logic [31:0] data_wdata,
+    input  logic [31:0] data_rdata
 );
 
     // ---- Program Counter ----
@@ -18,6 +30,8 @@ module rv32i_cpu #(
 
     // ---- Fetch ----
     logic [31:0] instr;
+    assign instr_addr = pc;
+    assign instr      = instr_data;
 
     // ---- Decode ----
     logic [6:0]  opcode, funct7;
@@ -97,6 +111,12 @@ module rv32i_cpu #(
 
     // ---- Data memory interface ----
     logic [31:0] mem_rdata;
+    assign data_addr   = alu_result;
+    assign data_funct3 = funct3;
+    assign data_read   = mem_read;
+    assign data_write  = mem_write;
+    assign data_wdata  = rs2_data;
+    assign mem_rdata   = data_rdata;
 
     // ---- Writeback mux ----
     always_comb begin
@@ -107,13 +127,5 @@ module rv32i_cpu #(
         else                rd_data = alu_result;         // ALU op
     end
 
-    // ---- Unified memory ----
-    mem #(.MEM_BYTES(MEM_BYTES)) u_mem (
-        .clk(clk),
-        .instr_addr(pc), .instr_data(instr),
-        .data_addr(alu_result), .funct3(funct3),
-        .mem_read(mem_read), .mem_write(mem_write),
-        .wdata(rs2_data), .rdata(mem_rdata)
-    );
 
 endmodule

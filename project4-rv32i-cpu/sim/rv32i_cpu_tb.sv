@@ -8,7 +8,7 @@ module rv32i_cpu_tb;
     logic clk = 0;
     logic rst_n = 0;
 
-    rv32i_cpu #(.MEM_BYTES(8192), .RESET_PC(32'h0)) dut (
+    rv32i_soc #(.MEM_BYTES(8192), .RESET_PC(32'h0)) dut (
         .clk(clk),
         .rst_n(rst_n)
     );
