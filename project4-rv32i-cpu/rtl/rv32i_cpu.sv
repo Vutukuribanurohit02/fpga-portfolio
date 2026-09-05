@@ -12,9 +12,7 @@ module rv32i_cpu #(
 
     // Data memory
     output logic [31:0] data_addr,
-    output logic [2:0]  data_funct3,
-    output logic        data_read,
-    output logic        data_write,
+    output logic [3:0]  data_wstrb,
     output logic [31:0] data_wdata,
     input  logic [31:0] data_rdata
 
@@ -127,12 +125,50 @@ module rv32i_cpu #(
 
     // ---- Data memory interface ----
     logic [31:0] mem_rdata;
-    assign data_addr   = alu_result;
-    assign data_funct3 = funct3;
-    assign data_read   = mem_read;
-    assign data_write  = mem_write;
-    assign data_wdata  = rs2_data;
-    assign mem_rdata   = data_rdata;
+    logic [1:0] byte_off;
+    assign data_addr = {alu_result[31:2], 2'b00};
+    assign byte_off  = alu_result[1:0];
+
+    // Store: byte strobes and lane-shifted write data
+    always_comb begin
+        data_wstrb = 4'b0000;
+        data_wdata = 32'b0;
+        if (mem_write) begin
+            case (funct3)
+                3'b000: begin
+                    data_wstrb = 4'b0001 << byte_off;
+                    data_wdata = {24'b0, rs2_data[7:0]} << (8*byte_off);
+                end
+                3'b001: begin
+                    data_wstrb = 4'b0011 << byte_off;
+                    data_wdata = {16'b0, rs2_data[15:0]} << (8*byte_off);
+                end
+                3'b010: begin
+                    data_wstrb = 4'b1111;
+                    data_wdata = rs2_data;
+                end
+                default: ;
+            endcase
+        end
+    end
+
+    // Load: byte/half select from the raw word, then extend per funct3
+    logic [7:0]  ld_b;
+    logic [15:0] ld_h;
+    logic [31:0] load_ext;
+    always_comb begin
+        ld_b = data_rdata[8*byte_off +: 8];
+        ld_h = byte_off[1] ? data_rdata[31:16] : data_rdata[15:0];
+        case (funct3)
+            3'b000:  load_ext = {{24{ld_b[7]}},  ld_b};   // LB
+            3'b001:  load_ext = {{16{ld_h[15]}}, ld_h};   // LH
+            3'b010:  load_ext = data_rdata;               // LW
+            3'b100:  load_ext = {24'b0, ld_b};            // LBU
+            3'b101:  load_ext = {16'b0, ld_h};            // LHU
+            default: load_ext = 32'b0;
+        endcase
+    end
+    assign mem_rdata = mem_read ? load_ext : 32'b0;
 
     // ---- Writeback mux ----
     always_comb begin
