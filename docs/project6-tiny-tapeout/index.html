@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RV32I ALU on Real Silicon — Tiny Tapeout TTSKY26c</title>
+<meta name="description" content="A formally verified RV32I ALU submitted to the Tiny Tapeout TTSKY26c sky130 shuttle, with a byte-addressed register interface solving a 101-signal-to-24-pin constraint.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <span class="brand">BANU ROHIT VUTUKURI <em>/ TAPEOUT</em></span>
+    <div class="nav-links">
+      <a href="#constraint">Constraint</a>
+      <a href="#protocol">Protocol</a>
+      <a href="#signoff">Sign-off</a>
+      <a href="#compare">Compare</a>
+      <a href="#repro">Reproduce</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Tiny Tapeout TTSKY26c &nbsp;·&nbsp; SkyWater 130nm shuttle</div>
+    <h1>From my hard drive<br>to <span class="accent">a shared wafer.</span></h1>
+    <p class="hero-sub">The same <strong>RV32I ALU</strong> from Project 05, wrapped for a real multi-project shuttle — 101 signals squeezed onto 24 pins, hardened with a clock tree, and signed off with <strong>positive slack on every path</strong>.</p>
+
+    <div class="stat-band">
+      <div class="stat"><span class="v" data-count="0.425" data-suffix=" ns">0</span><span class="k">setup worst slack</span></div>
+      <div class="stat"><span class="v"><em data-count="1602">0</em></span><span class="k">standard cells</span></div>
+      <div class="stat"><span class="v" data-count="85.5" data-suffix="%">0</span><span class="k">core utilization</span></div>
+      <div class="stat"><span class="v"><em>0</em>/<em>0</em>/<em>0</em></span><span class="k">DRC · LVS · antenna</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL ▾</div>
+</header>
+
+<section id="constraint">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">01</span><h2>The constraint</h2></div>
+    <p class="lede reveal">Tiny Tapeout gives every project the same pinout: eight dedicated inputs, eight dedicated outputs, eight bidirectionals. The ALU needs 68 input bits and produces 33. The interface <em>is</em> the design problem.</p>
+
+    <div class="grid2 reveal">
+      <p>Two operands at 32 bits each plus a 4-bit opcode is 68 bits in; a 32-bit result plus a zero flag is 33 bits out. Against <code>ui_in[7:0]</code>, <code>uo_out[7:0]</code> and <code>uio[7:0]</code>, that is a factor of four oversubscribed on input alone. Nothing about the ALU changes — the RTL is byte-for-byte the module that was formally verified in Project 03 and hardened in Project 05. What changes is everything around it.</p>
+      <p>The obvious answer is a serialisation FSM: shift operands in a bit or a nibble at a time behind a handshake. I rejected it. An FSM carries sequencing state, and sequencing state can desynchronise — if the host and the chip disagree about which byte is next, there is no way to tell from the outside, and recovery means a full reset. On a chip you cannot debug with a probe, that is a bad trade.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="protocol">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">02</span><h2>A register file, not a state machine</h2></div>
+    <p class="lede reveal">The operands are exposed as nine byte-addressed registers. The host writes them in any order, rewrites any single byte, and reads the result back one byte at a time. There is no protocol state to lose.</p>
+
+    <div class="grid2 reveal">
+      <p><code>uio_in[3:0]</code> carries a write address, <code>uio_in[4]</code> is write enable, and <code>ui_in[7:0]</code> is the data byte — captured on the rising clock edge. Addresses 0–3 are the four bytes of <code>a</code>, 4–7 the four bytes of <code>b</code>, 8 the opcode. Reads are pure combinational: <code>uio_in[6:5]</code> selects which result byte appears on <code>uo_out</code>, and the zero flag sits permanently on <code>uio_out[7]</code> with <code>uio_oe = 8'b1000_0000</code>.</p>
+      <p>The cost is 68 flip-flops. The benefit is that every state is directly addressable and independently rewritable — changing one operand byte and re-evaluating costs one clock, not a nine-byte reload. It also means the chip has no illegal states: any sequence of writes leaves it in a valid configuration, because there is no sequence being tracked.</p>
+    </div>
+
+    <div class="report reveal">
+      <table>
+        <tr><th>Address</th><th>Function</th><th>Address</th><th>Function</th></tr>
+        <tr><td>0–3</td><td><code>a[31:0]</code>, LSB first</td><td>8</td><td><code>alu_op[3:0]</code></td></tr>
+        <tr><td>4–7</td><td><code>b[31:0]</code>, LSB first</td><td>9</td><td><strong>accumulate</strong> — <code>a &lt;= result</code></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="accumulate">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>The address that changed the timing</h2></div>
+    <p class="lede reveal">Address 9 is not a register. Writing to it feeds the ALU result back into <code>a</code> — turning a stateless calculator into an accumulator, and introducing the design's only register-to-register path.</p>
+
+    <div class="grid2 reveal">
+      <p>Load <code>a</code> and the opcode once, then stream new <code>b</code> values and pulse address 9 after each. A running total costs one clock per operation instead of reloading all nine bytes. In RTL it is a single case arm — <code>4'd9: a_reg &lt;= alu_result;</code> — which synthesises to a 32-bit multiplexer on the register's D input and one decode term.</p>
+      <p>Physically it is more interesting than that. Before accumulate, every path in the design ran from a register to an output pad. Adding it created <code>a → ALU → a</code>: a genuine reg-to-reg arc through the entire 32-bit datapath, which static timing analysis now has to close inside one clock period. That arc closes with <strong>+10.49 ns</strong> of slack — comfortably the least critical path in the design.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="signoff">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">04</span><h2>Sign-off, and one violation the green checkmark hid</h2></div>
+    <p class="lede reveal">The shuttle's CI reports success on DRC, LVS and antenna. It does not fail on timing. The first hardened build passed every check and carried a <strong>−2.19 ns setup violation</strong> that nothing in the interface surfaced.</p>
+
+    <div class="grid2 reveal">
+      <p>I found it by pulling <code>metrics.csv</code> out of the build artifact rather than trusting the summary page. The failing path was not the new accumulate arc — that had positive slack throughout — but the older register-to-output path, <code>a_reg → ALU → result mux → pad</code>, against the template's default 20 ns constraint. The real critical path measured 22.2 ns.</p>
+      <p>The fix was one line: relax <code>CLOCK_PERIOD</code> from 20 ns to 25 ns. For a host-paced register interface the operating frequency is irrelevant — nothing streams — so the only thing lost is a number on a datasheet, and the thing gained is a design that does not ship with a known violation. Utilisation dropped from 85.2% to 80.4% in the process, because the relaxed constraint let synthesis choose smaller cells.</p>
+    </div>
+
+    <div class="report reveal">
+      <table>
+        <tr><th>Metric</th><th>Value</th><th>Metric</th><th>Value</th></tr>
+        <tr><td>Setup worst slack</td><td>+0.425 ns</td><td>Standard cells</td><td>1,602</td></tr>
+        <tr><td>Reg-to-reg setup slack</td><td>+10.49 ns</td><td>Core utilization</td><td>85.5%</td></tr>
+        <tr><td>Hold worst slack</td><td>+0.117 ns</td><td>Routed wirelength</td><td>55.4 mm</td></tr>
+        <tr><td>Clock skew</td><td>0.255 ns</td><td>Flip-flops</td><td>68</td></tr>
+        <tr><td>DRC / LVS / antenna</td><td>0 / 0 / 0</td><td>Clock buffers</td><td>117</td></tr>
+      </table>
+    </div>
+
+    <div class="die-frame reveal">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <img src="images/img_layout.png" alt="Full-tile GDS render of the hardened ALU on sky130" loading="lazy">
+      <div class="die-cap">
+        <span>VIEW: <span class="meta">full tile &middot; all mask layers</span></span>
+        <span>UTIL: <span class="meta">85.5%</span></span>
+        <span>PDK: <span class="meta">sky130A</span></span>
+      </div>
+    </div>
+
+    <p class="reveal">The cocotb suite — 14 directed vectors, 120 constrained-random vectors across all ten opcodes, partial-write isolation, write-enable gating, accumulate sequences and reset behaviour — passes at RTL and again against the hardened gate-level netlist. Ten of ten, both times.</p>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">05</span><h2>The same ALU, hardened twice</h2></div>
+    <p class="lede reveal">Project 05 was purely combinational. This one has registers. Two metrics prove that structurally, straight out of OpenROAD — no interpretation required.</p>
+
+    <div class="report reveal">
+      <table>
+        <tr><th></th><th>Project 05 — combinational</th><th>Project 07 — sequential</th></tr>
+        <tr><td>Clock period</td><td>33 ns</td><td>25 ns</td></tr>
+        <tr><td>Reg-to-reg setup slack</td><td><strong>Infinity</strong></td><td><strong>+10.49 ns</strong></td></tr>
+        <tr><td>Clock skew</td><td><strong>0</strong></td><td><strong>0.255 ns</strong></td></tr>
+        <tr><td>Standard cells</td><td>1,293</td><td>1,602</td></tr>
+        <tr><td>Core utilization</td><td>64.6%</td><td>85.5%</td></tr>
+        <tr><td>Routed wirelength</td><td>38.2 mm</td><td>55.4 mm</td></tr>
+        <tr><td>Timing repair buffers</td><td>208</td><td>183</td></tr>
+        <tr><td>Die area</td><td>21,303 µm² (free)</td><td>17,955 µm² (fixed tile)</td></tr>
+      </table>
+    </div>
+
+    <div class="grid2 reveal">
+      <p>A reg-to-reg slack of <code>Infinity</code> is not a good result — it means the metric is undefined, because no register-to-register paths exist. Likewise a clock skew of exactly zero means there is no clock tree to have skew. Project 05 hardened a block of pure combinational logic: no sequential elements, no CTS stage doing real work, no hold analysis with anything to hold. Both numbers becoming finite is the whole difference between the two runs, stated in the tool's own output.</p>
+      <p>The rest of the deltas are honest but mixed. 309 extra cells is the 68 flip-flops plus the register-file decode and result multiplexers — synthesis reports sequential elements at 12.3% of cell area. But utilization jumped because the Tiny Tapeout die is a <em>fixed</em> 1×1 tile, not a floorplan sized to the design, and the clock periods differ. Some of the movement is the design; some is the constraint. Re-running Project 05 at 25 ns on a fixed die would isolate it properly. That experiment is worth doing and I have not done it yet.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="repro">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-idx">06</span><h2>Reproduce</h2></div>
+    <p class="lede reveal">The whole flow runs in GitHub Actions on the shuttle's own template — no local toolchain required to rebuild the GDS.</p>
+
+    <div class="grid2 reveal">
+      <p>The repository is built from <code>TinyTapeout/ttsky-verilog-template</code>. Pushing to <code>main</code> triggers three workflows: <code>test</code> runs the cocotb suite under Icarus, <code>gds</code> hardens with LibreLane 3.x and re-runs the same tests against the gate-level netlist, and <code>docs</code> publishes the datasheet page. Every number above comes from <code>tt_submission/stats/metrics.csv</code> in the build artifact.</p>
+      <p>To run the simulation locally you need Icarus Verilog and cocotb — nothing else. <code>make</code> inside <code>test/</code> gives the full ten-test result in under a second of wall time. To rebuild the physical design locally instead of in CI, LibreLane via Nix with the sky130 PDK reproduces the same flow the Action runs.</p>
+    </div>
+
+    <p class="reveal"><a class="featured" href="https://github.com/Vutukuribanurohit02/ttsky26c-rv32i-alu">Repository →</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-in">
+    <span>PROJECT 06 / 06 · FPGA-PORTFOLIO</span>
+    <span>SKY130A · LIBRELANE 3.x · TINY TAPEOUT TTSKY26c</span>
+    <span>BANU ROHIT VUTUKURI · UNIVERSITY OF HOUSTON</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  const cio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el = e.target; cio.unobserve(el);
+      const target = parseFloat(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const isInt = el.dataset.format === 'int' || Number.isInteger(target);
+      const t0 = performance.now(), dur = 1400;
+      function tick(t){
+        const p = Math.min((t - t0)/dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const v = target * eased;
+        el.textContent = (isInt ? Math.round(v).toLocaleString() : v.toFixed(v < 10 ? 3 : 1)) + (p === 1 ? suffix : '');
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+</script>
+
+</body>
+</html>
