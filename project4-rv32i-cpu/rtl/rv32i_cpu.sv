@@ -18,7 +18,7 @@ module rv32i_cpu #(
 
 `ifdef RISCV_FORMAL
     ,
-    output logic        rvfi_valid,
+    output wire         rvfi_valid,
     output logic [63:0] rvfi_order,
     output logic [31:0] rvfi_insn,
     output logic        rvfi_trap,
@@ -245,15 +245,19 @@ module rv32i_cpu #(
         endcase
     end
 
+    // Single-cycle: the instruction at `pc` retires this cycle, so valid is
+    // combinational and every payload field describes the same instruction.
+    logic rvfi_out_of_reset;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            rvfi_valid <= 1'b0;
-            rvfi_order <= 64'd0;
+            rvfi_out_of_reset <= 1'b0;
+            rvfi_order        <= 64'd0;
         end else begin
-            rvfi_valid <= 1'b1;
+            rvfi_out_of_reset <= 1'b1;
             if (rvfi_valid) rvfi_order <= rvfi_order + 64'd1;
         end
     end
+    assign rvfi_valid = rvfi_out_of_reset;
 
     assign rvfi_insn      = instr;
     assign rvfi_trap      = trap;
