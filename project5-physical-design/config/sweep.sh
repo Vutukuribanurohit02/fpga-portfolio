@@ -1,5 +1,7 @@
 #!/bin/bash
-cd /home/vutukuribanurohit02/pd-alu
+# Run from the LibreLane working directory for this design (not committed here).
+# Original path: ~/pd-alu
+cd "${PD_ALU_DIR:?set PD_ALU_DIR to the LibreLane run directory}"
 for P in 32 34 40 50; do
   sed -i "s/CLOCK_PERIOD: .*/CLOCK_PERIOD: $P/" config.yaml
   python3 -m librelane --pdk-root $HOME/.ciel --run-tag alu_q$P ./config.yaml > /tmp/q$P.log 2>&1
