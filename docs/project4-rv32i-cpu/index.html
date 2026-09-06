@@ -18,6 +18,8 @@
       <a href="#datapath">Datapath</a>
       <a href="#toolchain">Toolchain</a>
       <a href="#formal">Formal proof</a>
+<a href="#riscv-formal">ISA conformance</a>
+<a href="#dii">Differential testing</a>
     </div>
   </div>
 </nav>
@@ -29,7 +31,7 @@
     <p class="hero-sub">A single-cycle RV32I CPU integrating three previously verified pieces — ALU, register file, and control unit — into a working processor. The final proof isn't a testbench claim; it's a <strong>compiled C program actually executing</strong> on the design.</p>
     <div class="stat-band">
       <div class="stat"><span class="v">RV32I</span><span class="k">full base instruction set</span></div>
-      <div class="stat"><span class="v"><em data-count="2">0</em></span><span class="k">vacuous proofs caught</span></div>
+      <div class="stat"><span class="v"><em data-count="43">0</em>/43</span><span class="k">ISA conformance checks passed</span></div>
       <div class="stat"><span class="v">GCC</span><span class="k">cross-toolchain from source</span></div>
       <div class="stat"><span class="v">C</span><span class="k">bubble-sort, compiled and run</span></div>
     </div>
@@ -71,20 +73,30 @@
       <table>
         <thead><tr><th>Property</th><th>Checked against</th></tr></thead>
         <tbody>
-          <tr><td class="cn">ALU-op selection</td><td>Independent reference computation</td></tr>
+          <tr><td class="cn">ALU-op selection</td><td>Re-derived reference &mdash; see below</td></tr>
           <tr><td class="cn">Branch / next-PC logic</td><td>Re-derived reference &mdash; see below</td></tr>
-          <tr><td class="cn">x0 hardwired-to-zero invariant</td><td>Independent reference computation</td></tr>
+          <tr><td class="cn">x0 hardwired-to-zero invariant</td><td>Invariant assertion &mdash; genuinely independent</td></tr>
         </tbody>
       </table>
     </div>
     <div class="findings reveal">
       <div class="finding good">
         <span class="ftag">Applied lesson</span>
-        <p><strong>Two vacuous formal proofs were caught and fixed</strong> before trusting these results — directly applying what Project 2's async FIFO taught: a proof that reports success while checking a structurally disconnected property is worse than no proof at all. Auditing every "PASS" for vacuousness is now a standing step, not an afterthought.</p>
+        <p><strong>Three vacuous proofs were caught and fixed across this portfolio</strong> before trusting these results — directly applying what Project 2's async FIFO taught: a proof that reports success while checking a structurally disconnected property is worse than no proof at all. Auditing every "PASS" for vacuousness is now a standing step, not an afterthought.</p>
       </div>
     </div>
   </div>
 </section>
+
+<section>
+<div class="wrap">
+<div class="finding reveal">
+<span class="ftag">What these proofs cannot see</span>
+<p>The first two checks above re-derive the design&rsquo;s own logic. The branch one compares <code>branch_taken</code> against a reference computed <em>in the bind file, from the same ALU result, with the same case statement</em>. It catches a typo or a refactor mistake. It cannot catch a misreading of the specification, because both sides would be wrong together. Calling it &ldquo;independent&rdquo; was generous &mdash; and the next section is how that became obvious.</p>
+</div>
+</div>
+</section>
+
 
 <section class="alt" id="riscv-formal">
 <div class="wrap">
@@ -163,7 +175,7 @@
 
 <footer>
   <div class="wrap f-in">
-    <span>PROJECT 04 / 05 · FPGA-PORTFOLIO</span>
+    <span>PROJECT 04 / 07 · FPGA-PORTFOLIO</span>
     <span>RISC-V · RV32I · SYSTEMVERILOG</span>
     <span>BANU ROHIT VUTUKURI · UNIVERSITY OF HOUSTON</span>
   </div>
