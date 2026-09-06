@@ -153,7 +153,7 @@ module rv32i_cpu #(
 
     // ---- Trap detection (RV32I: misaligned instruction and data addresses) ----
     assign mem_vaddr      = alu_result;
-    assign trap_insn_addr = (jump || branch_taken) && (pc_next[1:0] != 2'b00);
+    assign trap_insn_addr = (jump || branch) && (pc_next[1:0] != 2'b00);
     assign trap_load_addr = mem_read && (
                               (funct3 == 3'b001 || funct3 == 3'b101) ? mem_vaddr[0] :
                               (funct3 == 3'b010)                     ? |mem_vaddr[1:0] : 1'b0);
