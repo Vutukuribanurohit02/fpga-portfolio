@@ -262,9 +262,9 @@
         <p>Weingarten et al.&rsquo;s DATE 2024 BDD equivalence methodology, rebuilt from the paper alone and applied to my own RV32I ALU. Done &mdash; see Project 06.</p>
       </div>
       <div class="road-item">
-        <span class="r-tag">Queued</span>
+        <span class="r-tag">Complete</span>
         <h3>RVFI-DII instruction injection</h3>
-        <p>Direct instruction injection into the CPU's fetch interface per Joannou et al. 2024 — a verification interface almost no student portfolio touches.</p>
+        <p>Instructions injected straight into the fetch path &mdash; no memory image, indexed by retirement order rather than PC &mdash; and diffed against a reference model written from the ISA spec. Mismatches are minimised by delta debugging. <strong>164,000 instructions clean</strong>, and the tester itself validated by mutation: a planted SRA bug was caught and shrunk from 52 instructions to 4. Done &mdash; see Project 04.</p>
       </div>
     </div>
   </div>
