@@ -37,10 +37,11 @@
     </div>
 
     <div class="stat-band">
-      <div class="stat"><span class="v"><em data-count="5">0</em></span><span class="k">projects, all verified</span></div>
+      <div class="stat"><span class="v"><em data-count="7">0</em></span><span class="k">projects, all verified</span></div>
       <div class="stat"><span class="v" data-count="1293" data-format="int">0</span><span class="k">std cells taped to GDSII</span></div>
       <div class="stat"><span class="v"><em data-count="11">0</em>/11</span><span class="k">formal properties proven</span></div>
-      <div class="stat"><span class="v" data-count="9" data-format="int">0</span><span class="k">PVT corners signed off</span></div>
+      <div class="stat"><span class="v"><em data-count="43">0</em>/43</span><span class="k">ISA conformance checks passed</span></div>
+          <div class="stat"><span class="v" data-count="9" data-format="int">0</span><span class="k">PVT corners signed off</span></div>
     </div>
   </div>
   <div class="scroll-hint">SCROLL ▾</div>
@@ -49,7 +50,7 @@
 <section id="projects">
   <div class="wrap">
     <div class="sec-head reveal"><span class="sec-idx">01</span><h2>Projects</h2></div>
-    <p class="lede reveal">Five projects, each one a deliberate step deeper into the stack — from a bus peripheral to a CPU running compiled C to a routed die. Built, verified, and where possible <strong>validated on physical hardware</strong>, not just simulated.</p>
+    <p class="lede reveal">Seven projects, each one a deliberate step deeper into the stack — from a bus peripheral to a CPU running compiled C to a routed die. Built, verified, and where possible <strong>validated on physical hardware</strong>, not just simulated.</p>
 
     <div class="proj featured-proj reveal">
       <div class="proj-rail"><span class="proj-num">07</span><span class="proj-dot"></span></div>
@@ -131,7 +132,9 @@
         <ul>
           <li>Full RV32I datapath integrating the formally verified ALU, register file, decoder, and control unit</li>
           <li>Built a bare-metal <strong>RISC-V GCC cross-toolchain from source</strong> and ran a compiled C bubble-sort end to end</li>
-          <li>Formally verified ALU-op selection, branch/next-PC logic, and the x0-hardwired-to-zero invariant against independent reference computations</li>
+          <li>Block-level proofs on ALU-op selection, branch/next-PC logic and the x0-hardwired-to-zero invariant &mdash; these check the design against <em>itself</em>, which catches typos but not misread specifications</li>
+              <li><strong>43/43 riscv-formal ISA conformance checks pass</strong> &mdash; every RV32I instruction proven against the specification via an RVFI trace port, with memory driven as a free input so the solver explores every possible response</li>
+              <li>riscv-formal found a real bug the block proofs had passed over: the misaligned-instruction-address trap was gated on <code>branch_taken</code> when the spec raises it on a branch&rsquo;s computed target <em>whether or not the branch is taken</em>. A not-taken branch from an already-misaligned PC inherits the misalignment through <code>pc + 4</code></li>
           <li><strong>Caught and fixed two vacuous formal proofs</strong> before trusting results — applying lessons from Project 2's async FIFO bug</li>
         </ul>
         <div class="proj-links">
@@ -212,7 +215,7 @@
 <section class="alt" id="method">
   <div class="wrap">
     <div class="sec-head reveal"><span class="sec-idx">02</span><h2>How every project is built</h2></div>
-    <p class="lede reveal">The same discipline runs through all five: <strong>a claim isn't a result until it's been checked by something that could have said no.</strong></p>
+    <p class="lede reveal">The same discipline runs through all seven: <strong>a claim isn't a result until it's been checked by something that could have said no.</strong></p>
     <div class="method reveal">
       <div class="m-cell">
         <span class="m-idx">A</span>
@@ -256,7 +259,7 @@
       <div class="road-item">
         <span class="r-tag">Queued</span>
         <h3>Polynomial Formal Verification — DATE 2024 reimplementation</h3>
-        <p>Reimplementing Weingarten et al.'s complete-verification methodology against my own RV32I processor — research-grade formal verification applied to my own RV32I processor.</p>
+        <p>Weingarten et al.&rsquo;s DATE 2024 BDD equivalence methodology, rebuilt from the paper alone and applied to my own RV32I ALU. Done &mdash; see Project 06.</p>
       </div>
       <div class="road-item">
         <span class="r-tag">Queued</span>
