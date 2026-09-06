@@ -86,6 +86,72 @@
   </div>
 </section>
 
+<section class="alt" id="riscv-formal">
+<div class="wrap">
+<div class="sec-head reveal"><span class="sec-idx">04</span><h2>Proving the ISA, not my own opinion of it</h2></div>
+<p class="lede reveal">Block-level proofs check the design against itself. <strong>riscv-formal checks it against the RISC-V specification</strong> &mdash; and found something four passing proofs and a working C program had all missed.</p>
+<p class="reveal">The core was instrumented with an <strong>RVFI trace port</strong> reporting every cycle exactly what retired. The harness instantiates the CPU with <strong>no memory attached</strong> &mdash; instruction and data words are free inputs, so the solver explores every response memory could give.</p>
+<div class="report reveal">
+<div class="rhead"><span>RISCV-FORMAL &middot; RV32I</span><span class="ok">43 / 43 PASS</span></div>
+<table>
+<thead><tr><th>Check group</th><th>Count</th><th>Proves</th></tr></thead>
+<tbody>
+<tr><td class="cn">Per-instruction</td><td>37</td><td>Each RV32I instruction matches the ISA spec model</td></tr>
+<tr><td class="cn">reg</td><td>1</td><td>Register file consistent with reported writes</td></tr>
+<tr><td class="cn">pc_fwd / pc_bwd</td><td>2</td><td>PC sequencing consistent in both directions</td></tr>
+<tr><td class="cn">causal / unique</td><td>2</td><td>No retroactive causation; retirements distinct</td></tr>
+<tr><td class="cn">cover</td><td>1</td><td>The bounded model can reach multiple retirements</td></tr>
+</tbody>
+</table>
+</div>
+<div class="findings reveal">
+<div class="finding">
+<span class="ftag">Bug found</span>
+<p>Fourteen checks failed on the first run, all on <code>assert(spec_trap == trap)</code>. RV32I requires a trap on a misaligned branch or jump target &mdash; the core had none. Adding it fixed loads, stores and jumps, but <strong>every branch still failed</strong>.</p>
+<p>The counterexample: a PC already misaligned, executing a branch <em>not taken</em>. The next PC is <code>pc + 4</code>, inheriting the misalignment &mdash; and the spec raises the trap on a branch&rsquo;s computed target whether or not it is taken. The condition was gated on <code>branch_taken</code>; it needed <code>branch</code>. One word.</p>
+<p>No directed test would construct that state, and the bind-file proof could not see it: it re-derives the same condition from the same signals.</p>
+</div>
+<div class="finding good">
+<span class="ftag">Applied lesson &middot; third time</span>
+<p>Debug signals tapped through hierarchical dot-paths reported <strong>zero at every timestep</strong> &mdash; after flattening they resolve to dump-time constants, with no tool warning. The tell was an impossible pair: <code>pc</code> and <code>pc_plus4</code> both zero, when <code>pc_plus4</code> is a continuous assign of <code>pc + 4</code>. Fix: observe through real module ports, never dot-paths into a flattened design.</p>
+</div>
+</div>
+<p class="reveal">Scope: proofs run under <code>RISCV_FORMAL_ALIGNED_MEM</code>, the same assumption the reference picorv32 configuration uses. No CSRs, no interrupts, no compressed instructions.</p>
+</div>
+</section>
+
+
+<section id="dii">
+<div class="wrap">
+<div class="sec-head reveal"><span class="sec-idx">05</span><h2>Differential testing, and measuring what the fuzzer reaches</h2></div>
+<p class="lede reveal">The interesting result was not the clean run &mdash; it was what measuring the generator revealed.</p>
+<p class="reveal">A <strong>direct instruction injection</strong> harness on Verilator answers every fetch from a queue indexed by <em>retirement order rather than PC</em>. No memory image, no linker script. The same stream runs against a Python model written from the specification, traces are diffed field by field, and a <strong>delta-debugging shrinker</strong> minimises any mismatch.</p>
+<div class="report reveal">
+<div class="rhead"><span>DII DIFFERENTIAL RUN</span><span class="ok">164,000 INSTRUCTIONS CLEAN</span></div>
+<table>
+<thead><tr><th>Component</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td class="cn">Harness</td><td>Verilator, instructions injected by retirement index</td></tr>
+<tr><td class="cn">Reference</td><td>Python RV32I model written from the spec</td></tr>
+<tr><td class="cn">Differ</td><td>Field-by-field, mask-gated</td></tr>
+<tr><td class="cn">Shrinker</td><td>Delta debugging &mdash; halving pass, then single-instruction pass</td></tr>
+<tr><td class="cn">Result</td><td>2,000 sequences &times; 60 instructions, zero mismatches</td></tr>
+</tbody>
+</table>
+</div>
+<div class="findings reveal">
+<div class="finding good">
+<span class="ftag">The finding that mattered</span>
+<p>A fuzzer that finds no bugs is indistinguishable from one that checks nothing &mdash; the vacuous-proof trap, one level up. So a known bug was <strong>planted in the reference</strong> (SRA behaving as SRL). <strong>It was not caught.</strong></p>
+<p>Measuring the generator explained why: across 6,000 generated instructions there were <strong>zero SRA instructions with a negative operand</strong>. Registers start at zero and accumulate small immediates, so SRA/SRL, SLT/SLTU and BLT/BLTU were exercised syntactically while the behaviour distinguishing them was never reached.</p>
+<p>A LUI/ADDI prelude seeding wide values, plus biased register selection, fixed it. The planted bug was then caught and <strong>shrunk from 52 instructions to 4</strong>. Only then did a clean run mean anything.</p>
+</div>
+</div>
+<p class="reveal">Honest limitation: the reference shares an author with the RTL, so a shared misreading would go undetected. It was written from the spec rather than the RTL to reduce that, and riscv-formal covers conformance independently. The contribution here is the injection and shrinking infrastructure, not the reference.</p>
+</div>
+</section>
+
+
 <section>
   <div class="wrap">
     <div class="cta-row reveal">
