@@ -40,7 +40,7 @@ Memory now presents a plain word bus: aligned address, raw 32-bit read data, 4-b
 
 ---
 
-## Verification, in three layers
+## Verification, in four layers
 
 ### Layer 1 — running real software
 
@@ -98,6 +98,32 @@ One more subtlety worth keeping: the `cover` check failed until its condition ch
 
 ---
 
+### Layer 4 — differential testing with automatic shrinking
+
+Formal proves conformance within a bounded depth. Differential testing runs the design against a second implementation for as long as you like.
+
+A **direct instruction injection** harness on Verilator answers every fetch from a queue indexed by *retirement order rather than PC* — no memory image, no linker script, no need for branch targets to point anywhere real. That is what makes it test instruction semantics rather than control flow through memory. Each retirement is emitted as a JSON line carrying the full RVFI payload.
+
+The same stream runs against a Python reference model written from the specification. Traces are diffed field by field, and a **delta-debugging shrinker** minimises any mismatch: a halving pass first, then a single-instruction pass.
+
+**Result: 2,000 sequences x 60 instructions, 164,000 instructions, zero mismatches.**
+
+#### The finding that mattered
+
+The first clean run proved nothing. A fuzzer that finds no bugs is indistinguishable from one that checks nothing — the vacuous-proof trap, one level up.
+
+So a known bug was planted in the reference model: SRA behaving as SRL. **It was not caught.**
+
+Measuring the generator explained why. Across 6,000 generated instructions there were **zero SRA instructions with a negative operand**. Registers start at zero and only accumulate small immediates, so SRA against SRL, SLT against SLTU, and BLT against BLTU were being exercised syntactically while the behaviour that distinguishes them was never reached.
+
+A LUI/ADDI prelude seeding registers with wide values, plus biasing register selection toward the seeded ones, fixed the coverage. The planted bug was then caught and **shrunk from 52 instructions to 4** — two setup instructions to build a negative value, and the SRA that exposed it.
+
+Only after that did a clean run mean anything.
+
+**Honest limitation:** the reference model shares an author with the RTL, so a shared misreading of the specification would go undetected — the same weakness the bind-file proofs have. It was written from the spec document rather than from the RTL to reduce that, and riscv-formal covers ISA conformance independently. The contribution here is the injection and shrinking infrastructure, not the reference.
+
+---
+
 ## Scope, stated plainly
 
 - Proofs run under `RISCV_FORMAL_ALIGNED_MEM`, the same assumption the reference picorv32 configuration uses — misaligned access is assumed away at the bus level.
@@ -115,6 +141,9 @@ One more subtlety worth keeping: the `cover` check failed until its condition ch
 5. Why is sign extension the CPU's job rather than the memory's?
 6. What made the debug taps report zeros with no warning, and what is the general defence?
 7. Why is `rvfi_valid` combinational here, and what would break on a pipelined core?
+8. Why does DII index instructions by retirement order rather than by PC?
+9. Why is a fuzzer that finds no bugs not evidence of anything?
+10. How would you measure whether a random generator is reaching the cases that matter?
 
 ## Where it leads
 
