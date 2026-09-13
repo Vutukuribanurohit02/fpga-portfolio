@@ -66,7 +66,17 @@
 
 <section id="formal">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="sec-idx">03</span><h2>Formal verification, and catching itself lying twice</h2></div>
+    <div class="die-frame reveal">
+  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+  <img src="images/p04-cpu-bubblesort.png" alt="Compiled C bubble sort executing on the RV32I core" loading="lazy">
+  <div class="die-cap">
+    <span>RUN: <span class="meta">bubble_sort.hex on rv32i_cpu</span></span>
+    <span>TOOLCHAIN: <span class="meta">riscv32-unknown-elf-gcc, built from source</span></span>
+    <span>RESULT: <span class="meta">all checks passed</span></span>
+  </div>
+</div>
+
+<div class="sec-head reveal"><span class="sec-idx">03</span><h2>Formal verification, and catching itself lying twice</h2></div>
     <p class="lede reveal">Beyond running software, three specific properties were formally verified against independent reference computations.</p>
     <div class="report reveal">
       <div class="rhead"><span>FORMAL PROPERTIES</span><span class="ok">VERIFIED</span></div>
@@ -135,6 +145,16 @@
 
 <section id="dii">
 <div class="wrap">
+<div class="die-frame reveal">
+  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+  <img src="images/p04-riscv-formal-43of43.png" alt="riscv-formal reporting 43 of 43 checks passing" loading="lazy">
+  <div class="die-cap">
+    <span>SUITE: <span class="meta">riscv-formal, RV32I</span></span>
+    <span>BRANCHES: <span class="meta">the six that the trap fix turned green</span></span>
+    <span>RESULT: <span class="meta">43 / 43 PASS</span></span>
+  </div>
+</div>
+
 <div class="sec-head reveal"><span class="sec-idx">05</span><h2>Differential testing, and measuring what the fuzzer reaches</h2></div>
 <p class="lede reveal">The interesting result was not the clean run &mdash; it was what measuring the generator revealed.</p>
 <p class="reveal">A <strong>direct instruction injection</strong> harness on Verilator answers every fetch from a queue indexed by <em>retirement order rather than PC</em>. No memory image, no linker script. The same stream runs against a Python model written from the specification, traces are diffed field by field, and a <strong>delta-debugging shrinker</strong> minimises any mismatch.</p>
@@ -172,6 +192,16 @@
     </div>
   </div>
 </section>
+
+<div class="die-frame reveal">
+  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+  <img src="images/p04-dii-2000-clean.png" alt="DII differential run: 2000 sequences, no mismatches" loading="lazy">
+  <div class="die-cap">
+    <span>RUN: <span class="meta">2,000 sequences x 82 instructions</span></span>
+    <span>TOTAL: <span class="meta">164,000 instructions</span></span>
+    <span>RESULT: <span class="meta">no mismatches, 6.4 s</span></span>
+  </div>
+</div>
 
 <footer>
   <div class="wrap f-in">
