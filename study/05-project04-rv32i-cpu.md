@@ -106,7 +106,7 @@ A **direct instruction injection** harness on Verilator answers every fetch from
 
 The same stream runs against a Python reference model written from the specification. Traces are diffed field by field, and a **delta-debugging shrinker** minimises any mismatch: a halving pass first, then a single-instruction pass.
 
-**Result: 2,000 sequences x 60 instructions, 164,000 instructions, zero mismatches.**
+**Result: 2,000 sequences of 82 instructions each — a 22-instruction prelude (LUI/ADDI across x1–x11) plus 60 generated — for 164,000 instructions total, zero mismatches.**
 
 #### The finding that mattered
 
