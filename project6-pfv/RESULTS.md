@@ -74,7 +74,11 @@ order is not reproducible. This applies to Table III.
 
 ## Reproduce
 
-    cd ~/librelane && nix-shell --run "~/pfv-rv32i/extract.sh <op>"
-    cd ~/pfv-rv32i && source .venv/bin/activate && python3 profile2.py <op>
+    cd project6-pfv/scripts && nix-shell --run "./extract.sh <op>"
+    cd project6-pfv/scripts && python3 profile2.py <op>
+
+`run_all.sh` does both for every confirmed opcode. profile2.py re-execs
+itself with PYTHONHASHSEED=0; run it directly rather than sourcing a
+different environment first.
 
 Confirmed ops: and, xor, add. Remaining seven opcodes are mechanical.
