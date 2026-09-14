@@ -1,0 +1,61 @@
+Vivado Simulator 2018.2
+Time resolution is 1 ps
+
+--- Test 1: sending 0xA5 ---
+[PASS] Start bit correct at time 126000
+[PASS] Data bit 0 correct (1) at time 766000
+[PASS] Data bit 1 correct (0) at time 1406000
+[PASS] Data bit 2 correct (1) at time 2046000
+[PASS] Data bit 3 correct (0) at time 2686000
+[PASS] Data bit 4 correct (0) at time 3326000
+[PASS] Data bit 5 correct (1) at time 3966000
+[PASS] Data bit 6 correct (0) at time 4606000
+[PASS] Data bit 7 correct (1) at time 5246000
+[PASS] Stop bit correct at time 5886000
+[PASS] Returned to idle correctly at time 6496000
+
+--- Test 2: sending 0x00 ---
+[PASS] Start bit correct at time 6526000
+[PASS] Data bit 0 correct (0) at time 7166000
+[PASS] Data bit 1 correct (0) at time 7806000
+[PASS] Data bit 2 correct (0) at time 8446000
+[PASS] Data bit 3 correct (0) at time 9086000
+[PASS] Data bit 4 correct (0) at time 9726000
+[PASS] Data bit 5 correct (0) at time 10366000
+[PASS] Data bit 6 correct (0) at time 11006000
+[PASS] Data bit 7 correct (0) at time 11646000
+[PASS] Stop bit correct at time 12286000
+[PASS] Returned to idle correctly at time 12896000
+
+--- Test 3: sending 0xFF ---
+[PASS] Start bit correct at time 12926000
+[PASS] Data bit 0 correct (1) at time 13566000
+[PASS] Data bit 1 correct (1) at time 14206000
+[PASS] Data bit 2 correct (1) at time 14846000
+[PASS] Data bit 3 correct (1) at time 15486000
+[PASS] Data bit 4 correct (1) at time 16126000
+[PASS] Data bit 5 correct (1) at time 16766000
+[PASS] Data bit 6 correct (1) at time 17406000
+[PASS] Data bit 7 correct (1) at time 18046000
+[PASS] Stop bit correct at time 18686000
+[PASS] Returned to idle correctly at time 19296000
+
+--- Test 4: sending 0x55 ---
+[PASS] Start bit correct at time 19326000
+[PASS] Data bit 0 correct (1) at time 19966000
+[PASS] Data bit 1 correct (0) at time 20606000
+[PASS] Data bit 2 correct (1) at time 21246000
+[PASS] Data bit 3 correct (0) at time 21886000
+[PASS] Data bit 4 correct (1) at time 22526000
+[PASS] Data bit 5 correct (0) at time 23166000
+[PASS] Data bit 6 correct (1) at time 23806000
+[PASS] Data bit 7 correct (0) at time 24446000
+[PASS] Stop bit correct at time 25086000
+[PASS] Returned to idle correctly at time 25696000
+
+========================================
+Total checks: 44, Errors: 0
+ALL TESTS PASSED
+========================================
+
+$finish called at time : 25696 ns : File "C:/vivado/project1-uart/uart_apb_project/uart_apb_project.srcs/sources_1/imports/rtl/uart_tx_tb.sv" Line 143

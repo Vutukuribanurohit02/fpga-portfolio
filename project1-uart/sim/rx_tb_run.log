@@ -1,0 +1,21 @@
+Vivado Simulator 2018.2
+Time resolution is 1 ps
+
+--- Test 1: receiving 0xA5 ---
+[PASS] Received 0xa5 correctly at time 6475000
+
+--- Test 2: receiving 0x00 ---
+[PASS] Received 0x0 correctly at time 12875000
+
+--- Test 3: receiving 0xFF ---
+[PASS] Received 0xff correctly at time 19275000
+
+--- Test 4: receiving 0x55 ---
+[PASS] Received 0x55 correctly at time 25675000
+
+========================================
+Total checks: 4, Errors: 0
+ALL TESTS PASSED
+========================================
+
+$finish called at time : 25675 ns : File "C:/vivado/project1-uart/uart_apb_project/uart_apb_project.srcs/sources_1/imports/rtl/uart_rx_tb.sv" Line 122
