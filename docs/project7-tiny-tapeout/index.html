@@ -160,7 +160,7 @@
     <p class="lede reveal">The whole flow runs in GitHub Actions on the shuttle's own template — no local toolchain required to rebuild the GDS.</p>
 
     <div class="grid2 reveal">
-      <p>The repository is built from <code>TinyTapeout/ttsky-verilog-template</code>. Pushing to <code>main</code> triggers three workflows: <code>test</code> runs the cocotb suite under Icarus, <code>gds</code> hardens with LibreLane 3.x and re-runs the same tests against the gate-level netlist, and <code>docs</code> publishes the datasheet page. Every number above comes from <code>tt_submission/stats/metrics.csv</code> in the build artifact.</p>
+      <p>The repository is built from <code>TinyTapeout/ttsky-verilog-template</code>. Pushing to <code>main</code> triggers three workflows: <code>test</code> runs the cocotb suite under Icarus, <code>gds</code> hardens with LibreLane 3.x and re-runs the same tests against the gate-level netlist, and <code>docs</code> publishes the datasheet page. The physical-design figures above are read from <code>tt_submission/stats/metrics.csv</code>, which the <code>gds</code> workflow produces as a CI build artifact rather than committing to the repo. The RTL cocotb run is committed at <code>project7-tiny-tapeout/sim/cocotb_rtl_10of10.log</code>.</p>
       <p>To run the simulation locally you need Icarus Verilog and cocotb — nothing else. <code>make</code> inside <code>test/</code> gives the full ten-test result in under a second of wall time. To rebuild the physical design locally instead of in CI, LibreLane via Nix with the sky130 PDK reproduces the same flow the Action runs.</p>
     </div>
 
