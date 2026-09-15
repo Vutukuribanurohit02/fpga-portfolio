@@ -135,7 +135,7 @@
           <li>Block-level proofs on ALU-op selection, branch/next-PC logic and the x0-hardwired-to-zero invariant &mdash; these check the design against <em>itself</em>, which catches typos but not misread specifications</li>
               <li><strong>43/43 riscv-formal ISA conformance checks pass</strong> &mdash; every RV32I instruction proven against the specification via an RVFI trace port, with memory driven as a free input so the solver explores every possible response</li>
               <li>riscv-formal found a real bug the block proofs had passed over: the misaligned-instruction-address trap was gated on <code>branch_taken</code> when the spec raises it on a branch&rsquo;s computed target <em>whether or not the branch is taken</em>. A not-taken branch from an already-misaligned PC inherits the misalignment through <code>pc + 4</code></li>
-          <li><strong>Caught and fixed two vacuous formal proofs</strong> before trusting results — applying lessons from Project 2's async FIFO bug</li>
+          <li><strong>Caught and fixed three vacuous formal proofs</strong> before trusting results — applying lessons from Project 2's async FIFO bug</li>
         </ul>
         <div class="proj-links">
           <a class="featured" href="project4-rv32i-cpu/">View write-up →</a>
@@ -225,7 +225,7 @@
       <div class="m-cell">
         <span class="m-idx">B</span>
         <h3>Formal where it matters</h3>
-        <p>Safety properties proven with SymbiYosys, not just simulated. And proofs are audited for vacuousness — three vacuous proofs caught and fixed across this portfolio, each in a different disguise.</p>
+        <p>Safety properties checked formally with SymbiYosys, not just simulated. And proofs are audited for vacuousness — three vacuous proofs caught and fixed across this portfolio, each in a different disguise.</p>
       </div>
       <div class="m-cell">
         <span class="m-idx">C</span>

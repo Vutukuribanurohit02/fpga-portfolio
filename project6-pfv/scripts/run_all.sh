@@ -5,10 +5,13 @@
 # They never share an interpreter -- Yosys writes AIGER, Python reads it.
 #
 #   ./run_all.sh extract    # inside: cd ~/librelane && nix-shell
-#   ./run_all.sh check      # inside: source ~/pfv-rv32i/.venv/bin/activate
+#   ./run_all.sh check      # inside: source ~/.venv/pfv/bin/activate  (pip install py-aiger py-aiger-bdd dd)
 #   ./run_all.sh all        # check only (assumes AIGs already extracted)
 
 set -u
+if [ "${1:-all}" != extract ]; then
+  python3 -c "import aiger, aiger_bdd, dd" 2>/dev/null || { echo "ERROR: BDD stack not importable; activate the venv. Nothing was checked." >&2; exit 2; }
+fi
 cd "$(dirname "$0")/.."
 OPS="add sub and or xor slt sltu sll srl sra"
 
