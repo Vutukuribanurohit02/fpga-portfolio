@@ -1,0 +1,13 @@
+MUTATION TEST: aig/and.aag output bit 0 inverted (literal LSB flipped) | 2026-09-14 23:39:15
+circuit   : and.aag
+inputs    : 64
+outputs   : 32
+var order : a[0], b[0], a[1], b[1], a[2], b[2] ...
+build     : circuit 0.02s, reference 0.00s
+per-bit   : [3, 3, 3, 3, 3] ... 3
+sum       : 96
+
+NOT EQUIVALENT  AND : 1 of 32 output bits differ: [0]
+counterexample on bit 0:  a = 0x00000000   b = 0x00000000
+(unlisted input bits are don't-care)
+exit=1
