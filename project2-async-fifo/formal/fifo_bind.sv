@@ -101,6 +101,10 @@ module fifo_formal #(
     always @(*) if (wtick > 4'd2) assume (wrst_n);
     always @(*) if (rtick > 4'd2) assume (rrst_n);
 
+    // ENVIRONMENT: both domains reset together (async FIFO requirement).
+    // Without it, PDR finds a write-only reset that desynchronises the pointers (PDR: step 98; shortest via BMC: 72 steps).
+    always @(*) assume (wrst_n == rrst_n);
+
     // Well-behaved interface: never push when full, never pop when empty
     always @(posedge wclk)
         if (past_valid_w) assume (!(winc && wfull));
@@ -115,6 +119,11 @@ module fifo_formal #(
     // CORE SAFETY PROPERTY 1: never overflow past depth
     always @(posedge wclk)
         if (past_valid_w && past_valid_r) assert (occupancy <= DEPTH);
+
+    // Modulo occupancy: catches underflow too, and stays correct across pointer wrap.
+    wire [ADDR_WIDTH:0] occ_mod = wbin_dbg - rbin_dbg;
+    always @(posedge wclk)
+        if (past_valid_w && past_valid_r) assert (occ_mod <= DEPTH);
 
     // NOTE: "never underflow" was attempted here but, like the properties
     // below, proved fragile under this specific Yosys/SymbiYosys version's

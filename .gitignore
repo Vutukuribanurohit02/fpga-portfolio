@@ -40,3 +40,4 @@ project4-rv32i-cpu/sim/*.vcd
 project4-rv32i-cpu/sim/*_output.log
 __pycache__/
 *.pyc
+project2-async-fifo/formal/fifo_cover/

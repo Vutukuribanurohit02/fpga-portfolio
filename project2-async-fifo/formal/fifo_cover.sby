@@ -1,9 +1,10 @@
 [options]
-mode prove
+mode cover
+depth 80
 multiclock on
 
 [engines]
-abc pdr
+smtbmc boolector
 
 [script]
 read -formal -sv sync_2ff.sv
