@@ -1,0 +1,23 @@
+SBY 22:49:08 [alu] Removing directory '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu'.
+SBY 22:49:08 [alu] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/../rtl/alu.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu/src/alu.sv'.
+SBY 22:49:08 [alu] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu_bind.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu/src/alu_bind.sv'.
+SBY 22:49:08 [alu] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu_formal.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project3-rv32i-alu/formal/alu/src/alu_formal.sv'.
+SBY 22:49:08 [alu] engine_0: smtbmc boolector
+SBY 22:49:08 [alu] base: starting process "cd alu/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 22:49:08 [alu] base: finished (returncode=0)
+SBY 22:49:08 [alu] prep: starting process "cd alu/model; yosys -ql design_prep.log design_prep.ys"
+SBY 22:49:08 [alu] prep: finished (returncode=0)
+SBY 22:49:08 [alu] smt2: starting process "cd alu/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 22:49:08 [alu] smt2: finished (returncode=0)
+SBY 22:49:08 [alu] engine_0: starting process "cd alu; yosys-smtbmc -s boolector --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 22:49:08 [alu] engine_0: ##   0:00:00  Solver: boolector
+SBY 22:49:08 [alu] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY 22:49:08 [alu] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY 22:49:08 [alu] engine_0: ##   0:00:00  Status: passed
+SBY 22:49:08 [alu] engine_0: finished (returncode=0)
+SBY 22:49:08 [alu] engine_0: Status returned by engine: pass
+SBY 22:49:08 [alu] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 22:49:08 [alu] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 22:49:08 [alu] summary: engine_0 (smtbmc boolector) returned pass
+SBY 22:49:08 [alu] summary: engine_0 did not produce any traces
+SBY 22:49:08 [alu] DONE (PASS, rc=0)
