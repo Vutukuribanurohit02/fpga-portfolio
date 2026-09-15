@@ -1,0 +1,106 @@
+SBY 23:08:55 [fifo] Removing directory '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/../rtl/sync_2ff.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/sync_2ff.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/../rtl/wptr_full.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/wptr_full.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/../rtl/rptr_empty.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/rptr_empty.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/../rtl/fifo_mem.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/fifo_mem.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/../rtl/async_fifo.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/async_fifo.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo_bind.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/fifo_bind.sv'.
+SBY 23:08:55 [fifo] Copy '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo_formal.sv' to '/home/vutukuribanurohit02/work/fpga-portfolio/project2-async-fifo/formal/fifo/src/fifo_formal.sv'.
+SBY 23:08:55 [fifo] engine_0: smtbmc boolector
+SBY 23:08:55 [fifo] base: starting process "cd fifo/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 23:08:55 [fifo] base: finished (returncode=0)
+SBY 23:08:55 [fifo] prep: starting process "cd fifo/model; yosys -ql design_prep.log design_prep.ys"
+SBY 23:08:55 [fifo] prep: finished (returncode=0)
+SBY 23:08:55 [fifo] smt2: starting process "cd fifo/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 23:08:55 [fifo] smt2: finished (returncode=0)
+SBY 23:08:55 [fifo] engine_0: starting process "cd fifo; yosys-smtbmc -s boolector --presat --unroll --noprogress -t 60  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Solver: boolector
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 3..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 4..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 4..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 5..
+SBY 23:08:55 [fifo] engine_0: ##   0:00:00  Checking assertions in step 5..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 6..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 6..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 7..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 7..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 8..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 8..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 9..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 9..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 10..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 10..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 11..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 11..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 12..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 12..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 13..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 13..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 14..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 14..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 15..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 15..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 16..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 16..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 17..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 17..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 18..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 18..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 19..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 19..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 20..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 20..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 21..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 21..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 22..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 22..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 23..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 23..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 24..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 24..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 25..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 25..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 26..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 26..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 27..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 27..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 28..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 28..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 29..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 29..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 30..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 30..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 31..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 31..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 32..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 32..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 33..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 33..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 34..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 34..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 35..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 35..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assumptions in step 36..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Checking assertions in step 36..
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  BMC failed!
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Assert failed in fifo_formal_top.props: fifo_bind.sv:117.43-117.70 (_witness_.check_assert_fifo_bind_sv_117_40)
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY 23:08:56 [fifo] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY 23:08:56 [fifo] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace.smtc
+SBY 23:08:56 [fifo] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY 23:08:56 [fifo] engine_0: ##   0:00:01  Status: failed
+SBY 23:08:56 [fifo] engine_0: finished (returncode=1)
+SBY 23:08:56 [fifo] engine_0: Status returned by engine: FAIL
+SBY 23:08:56 [fifo] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 23:08:56 [fifo] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 23:08:56 [fifo] summary: engine_0 (smtbmc boolector) returned FAIL
+SBY 23:08:56 [fifo] summary: counterexample trace: fifo/engine_0/trace.vcd
+SBY 23:08:56 [fifo] summary:   failed assertion fifo_formal_top.props._witness_.check_assert_fifo_bind_sv_117_40 at fifo_bind.sv:117.43-117.70 step 36
+SBY 23:08:56 [fifo] DONE (FAIL, rc=2)
