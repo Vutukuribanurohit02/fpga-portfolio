@@ -369,7 +369,10 @@ disk and Python reads it back, so they never need to share an interpreter.
 python3 -m venv ~/pfv-rv32i/.venv
 source ~/pfv-rv32i/.venv/bin/activate
 pip install "setuptools<81" wheel
-pip install "dd==0.5.7" "py-aiger-bdd==0.2.1" py-aiger
+# Python 3.12; dd 0.5.7 needs old setuptools to build
+pip install "setuptools<81" wheel && pip install --no-build-isolation "dd==0.5.7"
+pip install "py-aiger==8.1.0" "py-aiger-bdd==0.2.1"
+# Versions matter: py-aiger 6.2.3 reports all 10 ops NOT EQUIVALENT on this same design.
 ```
 
 Version pinning matters: `py-aiger-bdd` 3.x requires `dd==0.5.7`, whose `setup.py`

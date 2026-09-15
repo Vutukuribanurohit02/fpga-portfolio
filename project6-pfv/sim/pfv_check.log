@@ -1,0 +1,13 @@
+python 3.12.14 | py-aiger 8.1.0 | py-aiger-bdd 0.2.1 | dd 0.5.7 | PYTHONHASHSEED=0 | 2026-09-14 23:36:14
+EQUIVALENT  ADD : all 32 output bits match the reference model
+EQUIVALENT  SUB : all 32 output bits match the reference model
+EQUIVALENT  AND : all 32 output bits match the reference model
+EQUIVALENT  OR : all 32 output bits match the reference model
+EQUIVALENT  XOR : all 32 output bits match the reference model
+EQUIVALENT  SLT : all 32 output bits match the reference model
+EQUIVALENT  SLTU : all 32 output bits match the reference model
+EQUIVALENT  SLL : all 32 output bits match the reference model
+EQUIVALENT  SRL : all 32 output bits match the reference model
+EQUIVALENT  SRA : all 32 output bits match the reference model
+
+=== 10 equivalent, 0 not equivalent ===

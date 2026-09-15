@@ -27,7 +27,9 @@ case "${1:-all}" in
   check|all)
     pass=0; fail=0
     for op in $OPS; do
-      if python3 scripts/equiv.py "$op" --quiet; then
+      out=$(python3 scripts/equiv.py "$op" --quiet 2>&1); rc=$?; echo "$out"
+      if [ $rc -ne 0 ] && ! grep -q "NOT EQUIVALENT" <<<"$out"; then echo "ERROR $op (rc=$rc): crashed or missing input -- nothing checked" >&2; exit 2; fi
+      if [ $rc -eq 0 ]; then
         pass=$((pass+1))
       else
         fail=$((fail+1))

@@ -192,7 +192,7 @@ def main():
         return 2
 
     here = os.path.dirname(os.path.abspath(__file__))
-    aig_path = os.path.join(here, "aig", op + ".aag")
+    aig_path = os.path.join(os.path.dirname(here), "aig", op + ".aag")
     if not os.path.isfile(aig_path):
         print("missing %s -- run extract.sh %s first" % (aig_path, op))
         return 2
