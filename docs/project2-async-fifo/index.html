@@ -29,7 +29,7 @@
     <p class="hero-sub">A dual-clock async FIFO where the no-overflow safety property is <strong>formally proven</strong> — not just exercised by a testbench that happened not to find a counterexample. This is the verification most student CDC designs skip entirely.</p>
     <div class="stat-band">
       <div class="stat"><span class="v"><em data-count="1">0</em>/1</span><span class="k">safety property proven</span></div>
-      <div class="stat"><span class="v" data-count="20" data-format="int">0</span><span class="k">BMC depth</span></div>
+      <div class="stat"><span class="v" data-count="60" data-format="int">0</span><span class="k">BMC depth</span></div>
       <div class="stat"><span class="v"><em data-count="121">0</em></span><span class="k">writes · 121 reads</span></div>
       <div class="stat"><span class="v"><em>0</em></span><span class="k">mismatches</span></div>
     </div>
@@ -51,7 +51,7 @@
 <section class="alt" id="formal">
   <div class="wrap">
     <div class="sec-head reveal"><span class="sec-idx">02</span><h2>Formal proof</h2></div>
-    <p class="lede reveal">The no-overflow safety property proven via <strong>SymbiYosys/Boolector</strong>, bounded model checking to depth 20 — the property holds across every reachable state the solver can explore that deep, not just the states a directed testbench happened to hit.</p>
+    <p class="lede reveal">The no-overflow safety property proven via <strong>SymbiYosys/Boolector</strong>, bounded model checking to depth 60 — the property holds across every reachable state the solver can explore that deep, not just the states a directed testbench happened to hit.</p>
     <div class="report reveal">
       <div class="rhead"><span>SYMBIYOSYS BMC RESULT</span><span class="ok">PASS</span></div>
       <table>
@@ -72,6 +72,10 @@
       <div class="finding good">
         <span class="ftag">Caught and fixed</span>
         <p>The first proof attempt <strong>passed</strong> — and was wrong. Unresolved hierarchical signal references meant the solver was checking a property that was structurally disconnected from the real design: a <strong>vacuous proof</strong>, one that reports success because it's checking nothing.</p>
+      </div>
+      <div class="finding good">
+        <span class="ftag">Depth matters too</span>
+        <p>A passing proof says nothing if no counterexample is reachable within the bound. Forcing <strong>wfull</strong> low &mdash; so the full flag never asserts and writes are never blocked &mdash; still produced a PASS at depth 20. At depth 60 that same mutation fails at step 36. The unmodified design failed at depth 60 as well, by a different route: the solver pulsed <strong>rrst_n</strong> mid-run, clearing the read pointer while the write pointer kept advancing. The reset assumption was gated on a signal that reset itself clears, so the guard switched off exactly when it was needed. Fixed with free-running counters no reset can clear. The proof now passes unmodified at depth 60 and fails under mutation &mdash; both directions checked.</p>
       </div>
       <div class="finding good">
         <span class="ftag">The lesson</span>
