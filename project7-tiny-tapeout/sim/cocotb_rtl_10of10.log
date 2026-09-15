@@ -1,0 +1,90 @@
+rm -f results.xml
+"make" -f Makefile results.xml
+make[1]: Entering directory '/home/vutukuribanurohit02/work/tt-alu/test'
+rm -f results.xml
+COCOTB_TEST_MODULES=test COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=tb TOPLEVEL_LANG=verilog \
+         /home/vutukuribanurohit02/oss-cad-suite/bin/vvp -M /home/vutukuribanurohit02/oss-cad-suite/lib/python3.11/site-packages/cocotb-2.1.0.dev0+41564633-py3.11-linux-x64.egg/cocotb/libs -m libcocotbvpi_icarus   sim_build/rtl/sim.vvp -fst   
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:216  in gpi_load_users                  Running entry func 'initialize' from loaded library '/home/vutukuribanurohit02/oss-cad-suite/lib/python3.11/site-packages/cocotb-2.1.0.dev0+41564633-py3.11-linux-x64.egg/cocotb/libs/libcocotb.so'
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:96   in initialize                      Using Python 3.11.6 interpreter at /home/vutukuribanurohit02/oss-cad-suite/bin/tabbypy3
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 14.0 (devel)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1789444863
+     0.00ns INFO     cocotb                             Initialized cocotb v2.1.0.dev0+41564633 from /home/vutukuribanurohit02/oss-cad-suite/lib/python3.11/site-packages/cocotb-2.1.0.dev0+41564633-py3.11-linux-x64.egg/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test.test_pin_directions (1/10)
+                                                            uio_oe must be 8'b1000_0000 at all times.
+     0.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:128: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+   600.00ns INFO     cocotb.tb                          uio_oe correct
+   600.00ns INFO     cocotb.regression                  test.test_pin_directions passed
+   600.00ns INFO     cocotb.regression                  running test.test_reset_state (2/10)
+                                                            After reset both operands and the opcode are zero, so ADD gives 0.
+   600.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:139: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+  1300.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:93: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          await Timer(2, units="ns")         # let the combinational path settle
+  1308.00ns INFO     cocotb.regression                  test.test_reset_state passed
+  1308.00ns INFO     cocotb.regression                  running test.test_directed (3/10)
+                                                            Hand-picked vectors, including the corners that usually break things.
+  1308.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:149: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+  2108.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:79: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          await Timer(1, units="ns")
+ 14617.00ns INFO     cocotb.tb                          14 directed vectors passed
+ 14617.00ns INFO     cocotb.regression                  test.test_directed passed
+ 14617.00ns INFO     cocotb.regression                  running test.test_random (4/10)
+                                                            Constrained random across every opcode.
+ 14617.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:185: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+123326.00ns INFO     cocotb.tb                          120 random vectors passed
+123326.00ns INFO     cocotb.regression                  test.test_random passed
+123326.00ns INFO     cocotb.regression                  running test.test_partial_write (5/10)
+                                                            Rewriting one byte must leave the other three alone.
+123326.00ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:209: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+125135.00ns INFO     cocotb.regression                  test.test_partial_write passed
+125135.00ns INFO     cocotb.regression                  running test.test_no_write_when_we_low (6/10)
+                                                            Address and data on the bus with WE low must not change anything.
+125135.01ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:232: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+127043.01ns INFO     cocotb.regression                  test.test_no_write_when_we_low passed
+127043.01ns INFO     cocotb.regression                  running test.test_reset_clears (7/10)
+                                                            Reset must return every register to zero.
+127043.01ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:252: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+129351.01ns INFO     cocotb.regression                  test.test_reset_clears passed
+129351.01ns INFO     cocotb.regression                  running test.test_accumulate (8/10)
+                                                            Address 9 latches the ALU result back into A.
+129351.01ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:268: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+131560.01ns INFO     cocotb.regression                  test.test_accumulate passed
+131560.01ns INFO     cocotb.regression                  running test.test_accumulate_running_total (9/10)
+                                                            Load A and the opcode once, then stream B values to sum them.
+131560.01ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:292: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+135669.01ns INFO     cocotb.regression                  test.test_accumulate_running_total passed
+135669.01ns INFO     cocotb.regression                  running test.test_accumulate_needs_write_enable (10/10)
+                                                            Address 9 with WE low must not accumulate.
+135669.01ns WARNING  py.warnings                        /home/vutukuribanurohit02/work/tt-alu/test/test.py:322: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          cocotb.start_soon(Clock(dut.clk, 100, units="ns").start())
+137577.01ns INFO     cocotb.regression                  test.test_accumulate_needs_write_enable passed
+137577.01ns INFO     cocotb.regression                  *************************************************************************************************
+                                                        ** TEST                                     STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        *************************************************************************************************
+                                                        ** test.test_pin_directions                  PASS         600.00           0.00     398193.42  **
+                                                        ** test.test_reset_state                     PASS         708.00           0.00     983626.11  **
+                                                        ** test.test_directed                        PASS       13309.00           0.01    1555060.09  **
+                                                        ** test.test_random                          PASS      108709.00           0.07    1556677.40  **
+                                                        ** test.test_partial_write                   PASS        1809.00           0.00    1467884.68  **
+                                                        ** test.test_no_write_when_we_low            PASS        1908.00           0.00    1635212.92  **
+                                                        ** test.test_reset_clears                    PASS        2308.00           0.00    1797002.72  **
+                                                        ** test.test_accumulate                      PASS        2209.00           0.00    1475588.08  **
+                                                        ** test.test_accumulate_running_total        PASS        4109.00           0.00    1556855.93  **
+                                                        ** test.test_accumulate_needs_write_enable   PASS        1908.00           0.00    1795945.25  **
+                                                        *************************************************************************************************
+                                                        ** TESTS=10 PASS=10 FAIL=0 SKIP=0                      137577.01           0.10    1423534.81  **
+                                                        *************************************************************************************************
+FST info: dumpfile tb.fst opened for output.
+make[1]: *** [/home/vutukuribanurohit02/oss-cad-suite/lib/python3.11/site-packages/cocotb-2.1.0.dev0+41564633-py3.11-linux-x64.egg/cocotb_tools/makefiles/simulators/Makefile.icarus:66: results.xml] Segmentation fault
+make[1]: *** Deleting file 'results.xml'
+make[1]: Leaving directory '/home/vutukuribanurohit02/work/tt-alu/test'
+make: *** [/home/vutukuribanurohit02/oss-cad-suite/lib/python3.11/site-packages/cocotb-2.1.0.dev0+41564633-py3.11-linux-x64.egg/cocotb_tools/makefiles/Makefile.inc:17: sim] Error 2
