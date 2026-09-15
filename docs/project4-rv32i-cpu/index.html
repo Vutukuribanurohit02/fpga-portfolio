@@ -112,6 +112,7 @@
 <div class="wrap">
 <div class="sec-head reveal"><span class="sec-idx">04</span><h2>Proving the ISA, not my own opinion of it</h2></div>
 <p class="lede reveal">Block-level proofs check the design against itself. <strong>riscv-formal checks it against the RISC-V specification</strong> &mdash; and found something four passing proofs and a working C program had all missed.</p>
+    <p class="reveal">Full 43-check run, all passing, committed at <code>project4-rv32i-cpu/sim/riscv_formal_43.log</code>.</p>
 <p class="reveal">The core was instrumented with an <strong>RVFI trace port</strong> reporting every cycle exactly what retired. The harness instantiates the CPU with <strong>no memory attached</strong> &mdash; instruction and data words are free inputs, so the solver explores every response memory could give.</p>
 <div class="report reveal">
 <div class="rhead"><span>RISCV-FORMAL &middot; RV32I</span><span class="ok">43 / 43 PASS</span></div>

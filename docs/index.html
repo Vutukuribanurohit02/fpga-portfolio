@@ -170,14 +170,14 @@
       <div class="proj-rail"><span class="proj-num">02</span><span class="proj-dot"></span></div>
       <div class="proj-body">
         <div class="proj-top">
-          <h3>Async FIFO with Formal CDC Proof</h3>
+          <h3>Async FIFO with Bounded Formal Verification</h3>
           <span class="badge">Complete</span>
         </div>
         <div class="proj-tags"><span>CDC</span><span>GRAY CODE</span><span>SYMBIYOSYS</span><span>BMC</span></div>
         <p class="summary">A clock-domain-crossing FIFO with correctness <strong>proven formally</strong> — the piece most student projects skip.</p>
         <ul>
           <li>Cummings SNUG 2002 dual-clock architecture with Gray-code pointer synchronization and 2-flop CDC synchronizers</li>
-          <li>Formally proven no-overflow safety property (SymbiYosys/Boolector, BMC depth 20)</li>
+          <li>No-overflow safety property model-checked to depth 60 (SymbiYosys/Boolector BMC)</li>
           <li><strong>Caught and fixed a vacuous-proof bug</strong> from unresolved hierarchical signal references — a proof that passes while checking nothing is worse than no proof at all</li>
           <li>Self-checking testbench across independent 100 MHz / 66 MHz clock domains — 121 writes, 121 reads, <strong>0 mismatches</strong></li>
         </ul>
@@ -235,7 +235,7 @@
       <div class="m-cell">
         <span class="m-idx">D</span>
         <h3>Bugs are the story</h3>
-        <p>The SRA false counterexample, the vacuous CDC proof, the fixed 31.7 ns critical path — each project documents what went wrong and how it was caught.</p>
+        <p>The SRA false counterexample, the FIFO bound too shallow to fail, the fixed 31.7 ns critical path — each project documents what went wrong and how it was caught.</p>
       </div>
     </div>
   </div>
