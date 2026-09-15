@@ -57,7 +57,7 @@
 
     <div class="grid2 reveal">
       <p>The horizontal red bands are alternating power and ground rails; each row of cells between them is one standard-cell row. The pink vertical columns are tap cells — substrate ties inserted on a fixed pitch to prevent latch-up. The dark gaps are genuine placement whitespace at <strong>64.6% core utilization</strong>, before fill insertion.</p>
-      <p>The full die measures <strong>140.7 × 151.4 µm</strong> — about the width of two human hairs — and carries 1,293 logic cells implementing all ten RV32I ALU operations plus a 103-pin I/O ring. Routed wirelength totals <strong>38.2 mm</strong> of metal across the layer stack.</p>
+      <p>The full die measures <strong>140.7 × 151.4 µm</strong> — about the width of two human hairs — and carries 1,293 logic cells implementing all ten RV32I ALU operations plus a 103-pin I/O ring &mdash; <code>design__io</code> after routing; <code>floorplan__design__io</code> reads 101 before the power pins join the ring. Routed wirelength totals <strong>38.2 mm</strong> of metal across the layer stack.</p>
     </div>
 
     <div class="die-frame reveal">
