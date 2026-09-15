@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Async FIFO — Bounded Formal Verification — Banu Rohit Vutukuri</title>
+<title>Async FIFO — Unbounded Formal Proof — Banu Rohit Vutukuri</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,9 +24,9 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="kicker">Clock-domain crossing · model-checked to depth 60, not just simulated</div>
+    <div class="kicker">Clock-domain crossing · proven unbounded, not just simulated</div>
     <h1>The FIFO everyone simulates.<br><span class="accent">This one's proven.</span></h1>
-    <p class="hero-sub">A dual-clock async FIFO where the no-overflow safety property is <strong>exhaustively checked to depth 60</strong> — not just exercised by a testbench that happened not to find a counterexample. This is the verification most student CDC designs skip entirely.</p>
+    <p class="hero-sub">A dual-clock async FIFO where the no-overflow safety property is <strong>proven for every reachable state</strong> — not just exercised by a testbench that happened not to find a counterexample. This is the verification most student CDC designs skip entirely.</p>
     <div class="stat-band">
       <div class="stat"><span class="v"><em data-count="1">0</em>/1</span><span class="k">safety property proven</span></div>
       <div class="stat"><span class="v" data-count="60" data-format="int">0</span><span class="k">BMC depth</span></div>
@@ -51,13 +51,14 @@
 <section class="alt" id="formal">
   <div class="wrap">
     <div class="sec-head reveal"><span class="sec-idx">02</span><h2>Formal proof</h2></div>
-    <p class="lede reveal">The no-overflow safety property checked with <strong>SymbiYosys/Boolector</strong>, bounded model checking to depth 60 — the property holds across every reachable state the solver can explore that deep, not just the states a directed testbench happened to hit. This is a bounded result, not an unbounded proof: switching to <code>mode prove</code> fails k-induction from an unreachable start state, so the property still needs strengthening invariants linking the Gray and binary pointers before it closes.</p>
+    <p class="lede reveal">No-overflow and no-underflow are <strong>proven unbounded</strong> with SymbiYosys and ABC PDR, under one stated environment assumption: both domains are reset together. Getting there exposed two problems. A depth-60 BMC run had passed, but PDR found a counterexample at step 98, and depth-105 BMC confirmed the shortest one is 72 steps: a write-only reset desynchronises the pointers and the read side keeps reading data that is not there, beyond any horizon depth 60 could reach. The original <code>occupancy &lt;= DEPTH</code> check was also blind to underflow; it sat at &minus;16 for hundreds of steps without firing. The fix is a joint-reset assumption plus a modulo occupancy check. A stuck-low <code>wfull</code> mutation still fails in 36 steps, and cover traces reach both full and empty, so the assumption does not make the proof vacuous. All runs are logged in <code>project2-async-fifo/sim/</code>.</p>
     <div class="report reveal">
       <div class="rhead"><span>SYMBIYOSYS BMC RESULT</span><span class="ok">PASS</span></div>
       <table>
         <thead><tr><th>Property</th><th>Solver</th><th>Depth</th><th>Result</th></tr></thead>
         <tbody>
-          <tr><td class="cn">no_overflow</td><td>Boolector</td><td>60</td><td class="ok-cell">Pass (BMC)</td></tr>
+          <tr><td class="cn">no_overflow</td><td>ABC PDR</td><td>unbounded</td><td class="ok-cell">Proven</td></tr>
+          <tr><td class="cn">no_underflow (modulo occupancy)</td><td>ABC PDR</td><td>unbounded</td><td class="ok-cell">Proven</td></tr>
         </tbody>
       </table>
     </div>
@@ -88,7 +89,7 @@
 <section>
   <div class="wrap">
     <div class="tools reveal">
-      <span>SystemVerilog</span><span>SymbiYosys</span><span>Boolector</span><span>Gray-code CDC</span><span>Bounded Model Checking</span>
+      <span>SystemVerilog</span><span>SymbiYosys</span><span>Boolector</span><span>Gray-code CDC</span><span>ABC PDR</span><span>Unbounded Proof</span>
     </div>
     <div class="cta-row reveal">
       <a class="btn" href="https://github.com/Vutukuribanurohit02/fpga-portfolio/tree/main/project2-async-fifo">View source on GitHub</a>

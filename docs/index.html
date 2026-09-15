@@ -170,14 +170,14 @@
       <div class="proj-rail"><span class="proj-num">02</span><span class="proj-dot"></span></div>
       <div class="proj-body">
         <div class="proj-top">
-          <h3>Async FIFO with Bounded Formal Verification</h3>
+          <h3>Async FIFO with Unbounded Formal Proof</h3>
           <span class="badge">Complete</span>
         </div>
         <div class="proj-tags"><span>CDC</span><span>GRAY CODE</span><span>SYMBIYOSYS</span><span>BMC</span></div>
         <p class="summary">A clock-domain-crossing FIFO with correctness <strong>proven formally</strong> — the piece most student projects skip.</p>
         <ul>
           <li>Cummings SNUG 2002 dual-clock architecture with Gray-code pointer synchronization and 2-flop CDC synchronizers</li>
-          <li>No-overflow safety property model-checked to depth 60 (SymbiYosys/Boolector BMC)</li>
+          <li>No-overflow and no-underflow proven unbounded (SymbiYosys, ABC PDR) under a joint-reset assumption</li>
           <li><strong>Caught and fixed a vacuous-proof bug</strong> from unresolved hierarchical signal references — a proof that passes while checking nothing is worse than no proof at all</li>
           <li>Self-checking testbench across independent 100 MHz / 66 MHz clock domains — 121 writes, 121 reads, <strong>0 mismatches</strong></li>
         </ul>
