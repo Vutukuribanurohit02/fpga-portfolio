@@ -90,6 +90,17 @@ module fifo_formal #(
     always @(posedge rclk)
         if (past_valid_r) assume (rrst_n);
 
+    // The guards above are gated on signals that the resets themselves
+    // clear, so they switch off exactly when a reset pulse arrives. These
+    // counters are never reset, so they survive a pulse and can constrain
+    // the resets unconditionally once the initial reset window has passed.
+    logic [3:0] wtick = 4'd0, rtick = 4'd0;
+    always @(posedge wclk) if (wtick != 4'hF) wtick <= wtick + 4'd1;
+    always @(posedge rclk) if (rtick != 4'hF) rtick <= rtick + 4'd1;
+
+    always @(*) if (wtick > 4'd2) assume (wrst_n);
+    always @(*) if (rtick > 4'd2) assume (rrst_n);
+
     // Well-behaved interface: never push when full, never pop when empty
     always @(posedge wclk)
         if (past_valid_w) assume (!(winc && wfull));
